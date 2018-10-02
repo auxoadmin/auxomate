@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_aware"
+        android:icon="@drawable/aware_24dp"
+        android:title="@string/title_aware" />
+
+    <item
+        android:id="@+id/navigation_aspire"
+        android:icon="@drawable/aspire_24dp"
+        android:title="@string/title_aspire" />
+
+    <item
+        android:id="@+id/navigation_act"
+        android:icon="@drawable/act_24dp"
+        android:title="@string/title_act" />
+    <item
+        android:id="@+id/navigation_userprofile"
+        android:icon="@drawable/user_24dp"
+        android:title="@string/title_userprofile" />
+
+</menu>

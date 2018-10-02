@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:orientation="vertical"
+    tools:context=".fragments.UserWelcomeFragment">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Perfect,"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textColor="#000"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/userwelcome_textview_name"
+        android:text="USERNAME!"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textColor="#000"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Begin"
+        android:textSize="24sp"
+        android:textColor="#000"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Reinventing"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textColor="#000"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Yourself"
+        android:textAlignment="textEnd"
+        android:textSize="24sp"
+        android:textColor="#000"/>
+
+</LinearLayout>

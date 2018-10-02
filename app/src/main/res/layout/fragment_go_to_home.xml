@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".fragments.GoToHomeFragment">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Wishing you a rewarding"
+        android:textSize="24sp"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="4dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gotohome_textview_name"
+        android:text="Journey USERNAME!"
+        android:textSize="24sp"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/gotohome_button_next"
+        android:text="Go To The Dashboard"
+        style="@style/Widget.AppCompat.Button.Colored"/>
+
+</LinearLayout>

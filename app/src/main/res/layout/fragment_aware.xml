@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#b0b1b2"
+    tools:context=".fragments.AwareFragment"
+    >
+
+    <ImageView
+        android:id="@+id/record_imge"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:scaleType="fitStart"
+        android:src="@drawable/microphone"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:paddingTop="150dp">
+
+
+        <ImageView
+            android:id="@+id/recordBtnPlay"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="30dp"
+            android:layout_toEndOf="@+id/recordBtnStop"
+            android:src="@drawable/play_img"
+            />
+
+        <Button
+            android:id="@+id/recordBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignTop="@+id/recordBtnPlay"
+            android:layout_marginStart="100dp"
+            android:background="@drawable/recording_img"
+            />
+
+        <Button
+            android:id="@+id/recordBtnStop"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="30dp"
+            android:layout_toEndOf="@+id/recordBtn"
+            android:background="@drawable/stop_img"
+             />
+    </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/aware_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="200dp"
+            android:layout_marginBottom="56dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            />
+
+
+        <!-- <Button
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:background="@android:color/holo_blue_dark"
+         android:id="@+id/recordBtnPlay"
+         android:text="Play"
+         android:textColor="#ffffff"/>-->
+    </RelativeLayout>

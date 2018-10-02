@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".activities.TaskSubmit"
+tools:layout_editor_absoluteY="81dp"
+android:layout_marginBottom="56dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Primary Task"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Task 1"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="4dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tasksubmit_edittext_pttaskone"
+            android:hint="Write something here"
+            android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
+            android:maxLines="5"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Secondary Tasks"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Task 2"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="4dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tasksubmit_edittext_sttasktwo"
+            android:hint="Write something here"
+            android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
+            android:maxLines="5"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Task 3"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="4dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tasksubmit_edittext_sttaskthree"
+            android:hint="Write something here"
+            android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
+            android:maxLines="5"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="32dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Schedule Tasks (Start time / Duration)"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Task 1"/>
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="match_parent" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tasksubmit_edittext_schttaskonetime"
+                android:hint="Time"
+                android:inputType="time"
+                android:layout_weight="0.5"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:clickable="true"
+                />
+
+            <Space
+                android:layout_width="4dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="/"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:gravity="center"/>
+
+            <Space
+                android:layout_width="4dp"
+                android:layout_height="match_parent" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tasksubmit_edittext_schttaskoneduration"
+                android:hint="Duration"
+                android:inputType="number"
+                android:layout_weight="0.5"
+                />
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Task 2"/>
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="match_parent" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tasksubmit_edittext_schttasktwotime"
+                android:hint="Time"
+                android:inputType="time"
+                android:layout_weight="0.5"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:clickable="true"/>
+
+            <Space
+                android:layout_width="4dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="/"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:gravity="center"/>
+
+            <Space
+                android:layout_width="4dp"
+                android:layout_height="match_parent" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tasksubmit_edittext_schttasktwoduration"
+                android:hint="Duration"
+                android:inputType="number"
+                android:layout_weight="0.5"/>
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Task 3"/>
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="match_parent" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tasksubmit_edittext_schttaskthreetime"
+                android:hint="Time"
+                android:inputType="time"
+                android:layout_weight="0.5"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:clickable="true"/>
+
+            <Space
+                android:layout_width="4dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="/"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:gravity="center"/>
+
+            <Space
+                android:layout_width="4dp"
+                android:layout_height="match_parent" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tasksubmit_edittext_schttaskthreeduration"
+                android:hint="Duration"
+                android:inputType="number"
+                android:layout_weight="0.5"/>
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="32dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Schedule Visualizations (Start time)"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="V1"/>
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="match_parent" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tasksubmit_edittext_schvonetime"
+                android:hint="Time"
+                android:inputType="time"
+                android:layout_weight="0.5"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:clickable="true"/>
+
+            <Space
+                android:layout_width="4dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="V2"/>
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="match_parent" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tasksubmit_edittext_schvtwotime"
+                android:hint="Time"
+                android:inputType="time"
+                android:layout_weight="0.5"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:clickable="true"/>
+
+            <Space
+                android:layout_width="4dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="V3"/>
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="match_parent" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tasksubmit_edittext_schvthreetime"
+                android:hint="Time"
+                android:inputType="time"
+                android:layout_weight="0.5"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:clickable="true"/>
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tasksubmit_button_submit"
+            android:text="Submit"
+            android:textAllCaps="false"
+            style="@style/Widget.AppCompat.Button.Colored"/>
+
+    </LinearLayout>
+</ScrollView>
+
