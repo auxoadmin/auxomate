@@ -380,7 +380,7 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
         cv.findViewById(R.id.dialog_btn_save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                recordBtn.setText("Record");
+                //recordBtn.setText("Record");
                 final String s = editText.getText().toString();
                 StorageMetadata metadata = new StorageMetadata.Builder()
                         .setContentType("audio/3gp")
