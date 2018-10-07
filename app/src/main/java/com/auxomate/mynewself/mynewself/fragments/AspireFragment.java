@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -47,6 +48,8 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
@@ -66,6 +69,10 @@ public class AspireFragment extends Fragment implements View.OnClickListener {
     DatabaseReference mDatabase;
     String key;
     public String [] imageUrl;
+    private static final int MAX_DIMENSION = 1200;
+    Uri uploadUri;
+    Context applicationContext = HomeActivity.getContextOfApplication();
+
 
     public AspireFragment() {
         // Required empty public constructor
@@ -129,7 +136,7 @@ public class AspireFragment extends Fragment implements View.OnClickListener {
 
                 }else {
                     postToFirebase();
-                    imageButtonAdd.setImageDrawable(null);
+                    imageButtonAdd.setImageResource(R.drawable.add_btn);
                 }
 
 //                Intent intent = new Intent(getActivity(),AspireGallery.class);
@@ -217,11 +224,24 @@ public class AspireFragment extends Fragment implements View.OnClickListener {
         final String des_val = editTextDesc.getText().toString().trim();
 
         if(!TextUtils.isEmpty(des_val) && resultUri != null){
+            try {
+                Bitmap bitmap =
+                        scaleBitmapDown(
+                                MediaStore.Images.Media.getBitmap(applicationContext.getContentResolver(), resultUri),
+                                MAX_DIMENSION);
 
-            final StorageReference filepath = mStorage.child("AuxoImage").child(resultUri.getLastPathSegment());
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                String path = MediaStore.Images.Media.insertImage(applicationContext.getContentResolver(), bitmap, "Title", null);
+                uploadUri = Uri.parse(path);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            final StorageReference filepath = mStorage.child("AuxoImage").child(uploadUri.getLastPathSegment());
 
 
-            UploadTask uploadTask = filepath.putFile(resultUri);
+            UploadTask uploadTask = filepath.putFile(uploadUri);
             //                    DatabaseReference newPost = mDatabase.push();
 //                    newPost.child("title").setValue(title_val);
 //                    newPost.child("description").setValue(des_val);
@@ -290,5 +310,25 @@ public class AspireFragment extends Fragment implements View.OnClickListener {
         AspireFragment fragment = new AspireFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    private Bitmap scaleBitmapDown(Bitmap bitmap, int maxDimension) {
+
+        int originalWidth = bitmap.getWidth();
+        int originalHeight = bitmap.getHeight();
+        int resizedWidth = maxDimension;
+        int resizedHeight = maxDimension;
+
+        if (originalHeight > originalWidth) {
+            resizedHeight = maxDimension;
+            resizedWidth = (int) (resizedHeight * (float) originalWidth / (float) originalHeight);
+        } else if (originalWidth > originalHeight) {
+            resizedWidth = maxDimension;
+            resizedHeight = (int) (resizedWidth * (float) originalHeight / (float) originalWidth);
+        } else if (originalHeight == originalWidth) {
+            resizedHeight = maxDimension;
+            resizedWidth = maxDimension;
+        }
+        return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
     }
 }
