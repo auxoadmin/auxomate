@@ -1,6 +1,7 @@
 package com.auxomate.mynewself.mynewself.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import com.auxomate.mynewself.mynewself.R;
 import com.auxomate.mynewself.mynewself.adapters.AspireViewPageAdapter;
 import com.auxomate.mynewself.mynewself.fragments.AspireFragment;
+import com.auxomate.mynewself.mynewself.models.AspireNotificationPager;
 import com.auxomate.mynewself.mynewself.models.AspireRecycler;
 import com.auxomate.mynewself.mynewself.utilities.PrefManager;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -58,11 +60,6 @@ public class AspireGallery extends AppCompatActivity {
                     // String key = String.valueOf(dataSnapshot.getValue());
                     getImageUrl(dataSnapshot);
 
-
-
-
-
-
                 } else {
                     Toast.makeText(getApplicationContext(), "****NOT FOUND****", Toast.LENGTH_LONG).show();
                 }
@@ -101,7 +98,7 @@ public class AspireGallery extends AppCompatActivity {
 
     private void getImageUrl(DataSnapshot dataSnapshot) {
         for(DataSnapshot ds : dataSnapshot.getChildren()){
-            AspireRecycler ar = dataSnapshot.getValue(AspireRecycler.class);
+            AspireNotificationPager ar = dataSnapshot.getValue(AspireNotificationPager.class);
             urlList.add(ar.getImage());
             desc.add(ar.getDescription());
             Log.d("ImageUrlLIst",ar.getImage());
@@ -114,8 +111,13 @@ public class AspireGallery extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(this,HomeActivity.class);
+        startActivity(i);
+    }
 
-//    private void getIncomingIntent(){
+    //    private void getIncomingIntent(){
 //        Log.d("Gallery","Incoming Intent");
 //        if(getIntent().hasExtra("imageUrl")&&getIntent().hasExtra("title")&&getIntent().hasExtra("desc")){
 //
