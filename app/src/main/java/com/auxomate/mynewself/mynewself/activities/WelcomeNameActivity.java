@@ -242,41 +242,7 @@ public class WelcomeNameActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            final CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == RESULT_OK) {
-
-                String s = PrefManager.getString(WelcomeNameActivity.this,PrefManager.PRF_FROMWHERE_FRAGS);
-
-                if (s.equalsIgnoreCase("act")){
-                    Bitmap bitmap= null;
-                    try {
-                        bitmap =
-                                scaleBitmapDown(
-                                        MediaStore.Images.Media.getBitmap(WelcomeNameActivity.this.getContentResolver(), result.getUri()),
-                                        MAX_DIMENSION);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    actFragment.uploadImage(WelcomeNameActivity.this,result.getUri());
-                }else {
-
-                   // aspireFragment.imageButtonAdd.setImageURI(result.getUri());
-                   // aspireFragment.setImageUri(result.getUri());
-                }
-
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Log.e("Faield","defwed");
-
-                Exception error = result.getError();
-            }
-        }
-
-    }
 
     private Bitmap scaleBitmapDown(Bitmap bitmap, int maxDimension) {
 

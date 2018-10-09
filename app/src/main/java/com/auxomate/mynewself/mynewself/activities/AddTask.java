@@ -1,6 +1,8 @@
 package com.auxomate.mynewself.mynewself.activities;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,6 +18,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +28,7 @@ import com.auxomate.mynewself.mynewself.BuildConfig;
 import com.auxomate.mynewself.mynewself.utilities.PackageManagerUtils;
 import com.auxomate.mynewself.mynewself.utilities.PermissionUtils;
 import com.auxomate.mynewself.mynewself.R;
+import com.auxomate.mynewself.mynewself.utilities.PrefManager;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpTransport;
@@ -52,148 +57,88 @@ import java.util.Locale;
 
 public class AddTask extends AppCompatActivity {
 
+
     private static final String CLOUD_VISION_API_KEY = BuildConfig.API_KEY;
     public static final String FILE_NAME = "temp.jpg";
     private static final String ANDROID_CERT_HEADER = "X-Android-Cert";
     private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
     private static final int MAX_LABEL_RESULTS = 10;
     private static final int MAX_DIMENSION = 1200;
-
-    private static final String TAG = MainActivity.class.getSimpleName();
-    private static final int GALLERY_PERMISSIONS_REQUEST = 0;
-    private static final int GALLERY_IMAGE_REQUEST = 1;
-    public static final int CAMERA_PERMISSIONS_REQUEST = 2;
-    public static final int CAMERA_IMAGE_REQUEST = 3;
+    ProgressDialog mProgress;
+    public static Activity context=null;
+    private static String visionString;
     Uri resultUri = null;
-
-    TextView mImageDetails;
-    private ImageView mMainImage;
-
-
+    ImageButton mMainImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_task);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        init();
 
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(AddTask.this);
-            builder
-                    .setMessage(R.string.dialog_select_prompt)
-                    .setPositiveButton(R.string.dialog_select_gallery, (dialog, which) -> startGalleryChooser())
-                    .setNegativeButton(R.string.dialog_select_camera, (dialog, which) -> startCamera());
-            builder.create().show();
+
+
+    }
+
+    private void init() {
+        mMainImage =findViewById(R.id.act_imgbutton_add);
+        mProgress= new ProgressDialog(AddTask.this);
+        mMainImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PrefManager.putString(getApplicationContext(),PrefManager.PRF_FROMWHERE_FRAGS,"act");
+                imagePicker();
+
+            }
         });
-
-        mImageDetails = findViewById(R.id.image_details);
-        mMainImage = findViewById(R.id.main_image);
-
-
-
-
     }
 
-    public void startGalleryChooser() {
-        if (PermissionUtils.requestPermission(this, GALLERY_PERMISSIONS_REQUEST,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent, "Select a photo"),
-                    GALLERY_IMAGE_REQUEST);
-        }
-    }
-
-    public void startCamera() {
-
-        CropImage.activity()
-                .setCropShape(CropImageView.CropShape.RECTANGLE).start(this);
-        if (PermissionUtils.requestPermission(
-                this,
-                CAMERA_PERMISSIONS_REQUEST,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA)) {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            Uri photoUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", getCameraFile());
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivityForResult(intent, CAMERA_IMAGE_REQUEST);
-        }
-    }
-
-
-    public File getCameraFile() {
-        File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        return new File(dir, FILE_NAME);
+    private void imagePicker() {
+        CropImage.activity().setCropShape(CropImageView.CropShape.RECTANGLE).start(this);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == GALLERY_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
-            uploadImage(data.getData());
-        } else if (requestCode == CAMERA_IMAGE_REQUEST && resultCode == RESULT_OK) {
-            Uri photoUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", getCameraFile());
-            uploadImage(photoUri);
-        }
-
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            final CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
-                resultUri = result.getUri();
+                Uri resultUri = result.getUri();
+
                 uploadImage(resultUri);
-
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Log.e("Faield","defwed");
-
                 Exception error = result.getError();
             }
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(
-            int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case CAMERA_PERMISSIONS_REQUEST:
-                if (PermissionUtils.permissionGranted(requestCode, CAMERA_PERMISSIONS_REQUEST, grantResults)) {
-                    startCamera();
-                }
-                break;
-            case GALLERY_PERMISSIONS_REQUEST:
-                if (PermissionUtils.permissionGranted(requestCode, GALLERY_PERMISSIONS_REQUEST, grantResults)) {
-                    startGalleryChooser();
-                }
-                break;
-        }
-    }
 
     public void uploadImage(Uri uri) {
+
+        mProgress.setMessage("Rendaring Your Image");
+       mProgress.show();
+
+
+        Log.d("uploadImage",uri.toString());
         if (uri != null) {
             try {
-                // scale the image to save on bandwidth
+                //  scale the image to save on bandwidth
                 Bitmap bitmap =
                         scaleBitmapDown(
-                                MediaStore.Images.Media.getBitmap(getContentResolver(), uri),
+                                MediaStore.Images.Media.getBitmap(getContentResolver(),uri),
                                 MAX_DIMENSION);
 
 
                 callCloudVision(bitmap);
-                mMainImage.setImageBitmap(bitmap);
+                // mMainImage.setImageBitmap(bitmap);
 
             } catch (IOException e) {
-                Log.d(TAG, "Image picking failed because " + e.getMessage());
-                Toast.makeText(this, R.string.image_picker_error, Toast.LENGTH_LONG).show();
+                Log.d("AddTask", "Image picking failed because " + e.getMessage());
+                //Toast.makeText(getActivity(), R.string.image_picker_error, Toast.LENGTH_LONG).show();
             }
         } else {
-            Log.d(TAG, "Image picker gave us a null image.");
-            Toast.makeText(this, R.string.image_picker_error, Toast.LENGTH_LONG).show();
+            Log.d("AddTask", "Image picker gave us a null image.");
+            // Toast.makeText(getActivity(), R.string.image_picker_error, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -259,18 +204,19 @@ public class AddTask extends AppCompatActivity {
                 vision.images().annotate(batchAnnotateImagesRequest);
         // Due to a bug: requests to Vision API containing large images fail when GZipped.
         annotateRequest.setDisableGZipContent(true);
-        Log.d(TAG, "created Cloud Vision request object, sending request");
+        Log.d("AddTask", "created Cloud Vision request object, sending request");
 
         return annotateRequest;
     }
 
     private class TextDetectionTask extends AsyncTask<Object, Void, String> {
-        private final WeakReference<AddTask> mActivityWeakReference;
+        private final WeakReference<Activity> mActivityWeakReference;
         private Vision.Images.Annotate mRequest;
         //public AddTask activity;
-        private  Context context;
+        private  Context mContext;
 
-        TextDetectionTask(AddTask activity, Vision.Images.Annotate annotate) {
+
+        TextDetectionTask(Activity activity, Vision.Images.Annotate annotate) {
             mActivityWeakReference = new WeakReference<>(activity);
             mRequest = annotate;
         }
@@ -278,49 +224,93 @@ public class AddTask extends AppCompatActivity {
         @Override
         protected String doInBackground(Object... params) {
             try {
-                Log.d(TAG, "created Cloud Vision request object, sending request");
+                Log.d("AddTask", "created Cloud Vision request object, sending request");
                 BatchAnnotateImagesResponse response = mRequest.execute();
-                return convertResponseToString(context,response);
+                return convertResponseToString(mContext,response);
 
 
             } catch (GoogleJsonResponseException e) {
-                Log.d(TAG, "failed to make API request because " + e.getContent());
+                Log.d("AddTask", "failed to make API request because " + e.getContent());
             } catch (IOException e) {
-                Log.d(TAG, "failed to make API request because of other IOException " +
+                Log.d("AddTask", "failed to make API request because of other IOException " +
                         e.getMessage());
             }
             return "Cloud Vision API request failed. Check logs for details.";
         }
 
         protected void onPostExecute(String result) {
-            AddTask activity = mActivityWeakReference.get();
-            if (activity != null && !activity.isFinishing()) {
-                TextView imageDetail = activity.findViewById(R.id.image_details);
-                imageDetail.setText(result);
-                Log.d("result",result);
-                Intent i = new Intent(activity,TaskSubmit.class);
-                i.putExtra("visionResult",result);
+            visionString = result;
+            // taskSubmit();
+
+
+            Activity activity = mActivityWeakReference.get();
+            if(activity!=null && !activity.isFinishing()) {
+                mProgress.dismiss();
+                Log.d("result", result);
+                Intent i = new Intent(activity, TaskSubmit.class);
+                i.putExtra("visionResult", visionString);
                 startActivity(i);
             }
+            else
+            {
+                Log.d("onPostExecute","Failed");
+            }
+
+
+
+
         }
 
 
     }
 
+
+
     private void callCloudVision(final Bitmap bitmap) {
         // Switch text to loading
-        mImageDetails.setText(R.string.loading_message);
+        //mImageDetails.setText(R.string.loading_message);
 
         // Do the real work in an async task, because we need to use the network anyway
         try {
             AsyncTask<Object, Void, String> textDetectionTask = new TextDetectionTask(AddTask.this, prepareAnnotationRequest(bitmap));
             textDetectionTask.execute();
         } catch (IOException e) {
-            Log.d(TAG, "failed to make API request because of other IOException " +
+            Log.d("AddTask", "failed to make API request because of other IOException " +
                     e.getMessage());
         }
     }
 
+
+
+    private static String convertResponseToString(Context ctx, BatchAnnotateImagesResponse response) {
+        StringBuilder message = new StringBuilder("");
+
+
+
+
+        //   BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
+        List<AnnotateImageResponse> responses = response.getResponses();
+
+        for (AnnotateImageResponse res : responses) {
+            if (res == null) {
+                Toast.makeText(ctx, "Error", Toast.LENGTH_SHORT).show();
+
+            }
+            String pageList = res.getFullTextAnnotation().getText();
+            Log.d("VisionList",pageList);
+
+            // For full list of available annotations, see http://g.co/cloud/vision/docs
+
+            message.append(String.format(Locale.US, "%s", res.getFullTextAnnotation().getText()));
+            message.append("\n");
+
+        }
+
+
+
+
+        return message.toString();
+    }
     private Bitmap scaleBitmapDown(Bitmap bitmap, int maxDimension) {
 
         int originalWidth = bitmap.getWidth();
@@ -340,37 +330,6 @@ public class AddTask extends AppCompatActivity {
         }
         return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
     }
-
-    private static String convertResponseToString(Context ctx, BatchAnnotateImagesResponse response) {
-        StringBuilder message = new StringBuilder("I found these things:\n\n");
-
-
-
-
-        //   BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
-        List<AnnotateImageResponse> responses = response.getResponses();
-
-        for (AnnotateImageResponse res : responses) {
-            if (res == null) {
-                Toast.makeText(ctx, "Error", Toast.LENGTH_SHORT).show();
-
-            }
-
-            // For full list of available annotations, see http://g.co/cloud/vision/docs
-            for (EntityAnnotation annotation : res.getTextAnnotations()) {
-                message.append(String.format(Locale.US, "%s", annotation.getDescription()));
-                message.append("\n");
-            }
-        }
-
-
-
-
-        return message.toString();
-    }
-
-
-
 
 
 }

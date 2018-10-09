@@ -13,55 +13,39 @@
         android:orientation="vertical"
         android:gravity="center">
 
-    <ImageButton
-        android:id="@+id/post_add_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:adjustViewBounds="true"
-        android:background="@color/colorPrimary"
-        android:scaleType="centerCrop"
-        android:src="@drawable/add_btn"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="170dp"
+            android:id="@+id/aspire_imgbutton_add"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/add_btn"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
+            />
 
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/aspire_edittext_description"
+            android:hint="How you feel?"
+            android:textColorHint="#90AAAAAA"
+            android:inputType="textCapSentences|textAutoCorrect"
+            android:layout_below="@id/aspire_imgbutton_add"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="8dp"/>
 
-
-    <EditText
-        android:id="@+id/post_edit_text"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_centerInParent="true"
-        android:background="@drawable/aspire_input_outline"
-        android:hint="Title..."
-        android:padding="15dp"
-        android:singleLine="true"
-        />
-
-    <EditText
-        android:id="@+id/post_multieditText"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/aspire_input_outline"
-        android:ems="10"
-        android:hint="Description..."
-        android:inputType="textMultiLine"
-        android:padding="15dp" />
-
-
-    <Button
-        android:id="@+id/post_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:textColor="@android:color/white"
-        android:text="Post"
-        android:layout_marginTop="25dp"
-        android:background="@color/colorPrimaryDark"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/aspire_button_submit"
+            android:text="Submit"
+            android:textAllCaps="false"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_below="@id/aspire_edittext_description"/>
 
     </LinearLayout>
 

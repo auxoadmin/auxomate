@@ -176,35 +176,7 @@ ActionBar toolbar ;
 //
 //    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            final CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == RESULT_OK) {
-                Log.d("ResultUri",result.getUri().toString());
 
-                String s = PrefManager.getString(HomeActivity.this,PrefManager.PRF_FROMWHERE_FRAGS);
-
-                if (s.equalsIgnoreCase("act")){
-
-
-                    actFragment.uploadImage(HomeActivity.this,result.getUri());
-                }else {
-                    Log.d("ResultUriAspire",result.getUri().toString());
-
-
-//                    aspireFragment.imageButtonAdd.setImageURI(result.getUri());
-
-                }
-
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Log.e("Faield","defwed");
-
-                Exception error = result.getError();
-            }
-        }
-    }
 
 
 }

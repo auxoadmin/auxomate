@@ -7,39 +7,6 @@
     tools:context=".fragments.AspireFragment"
     android:layout_marginBottom="56dp">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="170dp"
-        android:id="@+id/aspire_imgbutton_add"
-        android:adjustViewBounds="true"
-        android:scaleType="fitXY"
-        android:src="@drawable/add_btn"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="8dp"
-        />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/aspire_edittext_description"
-        android:hint="How you feel?"
-        android:inputType="textCapSentences|textAutoCorrect"
-        android:layout_below="@id/aspire_imgbutton_add"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="8dp"/>
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/aspire_button_submit"
-        android:text="Submit"
-        android:textAllCaps="false"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_below="@id/aspire_edittext_description"/>
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

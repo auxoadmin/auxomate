@@ -54,21 +54,19 @@ import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
 
-public class AspireFragment extends Fragment implements View.OnClickListener {
+public class AspireFragment extends Fragment  {
 
     View RootView;
     RecyclerView mRecycler;
    // DatabaseReference mDatabse;
 
-    public ImageView imageButtonAdd;
-    private EditText editTextDesc;
-    private Button buttonSubmit;
+
     ProgressDialog mProgress;
     private static Uri resultUri= null;
     StorageReference mStorage;
     DatabaseReference mDatabase;
     String key;
-    public String [] imageUrl;
+
     private static final int MAX_DIMENSION = 1200;
     Uri uploadUri;
     Context applicationContext = HomeActivity.getContextOfApplication();
@@ -116,41 +114,9 @@ public class AspireFragment extends Fragment implements View.OnClickListener {
         mRecycler.setAdapter(firebaseRecyclerAdapter);
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()){
-
-            case R.id.aspire_imgbutton_add:
-                PrefManager.putString(getActivity(),PrefManager.PRF_FROMWHERE_FRAGS,"aspire");
-                CropImage.activity().setCropShape(CropImageView.CropShape.RECTANGLE).start(getContext(),this);
-
-                break;
-
-            case R.id.aspire_button_submit:
-
-                String name = editTextDesc.getText().toString().trim();
-
-                if (TextUtils.isEmpty(name)){
-                    Snackbar.make(view,"Please enter Your feelings.",Snackbar.LENGTH_LONG).show();
 
 
-                }else {
-                    postToFirebase();
-                    imageButtonAdd.setImageResource(R.drawable.add_btn);
-                }
 
-//                Intent intent = new Intent(getActivity(),AspireGallery.class);
-//                startActivity(intent);
-
-                break;
-
-        }
-    }
-
-    public void setImageUri(Uri uri) {
-        Log.d("setImageUri",uri.toString());
-        imageButtonAdd.setImageURI(uri);
-    }
 
     public static class AspireViewHolder extends RecyclerView.ViewHolder{
         View mView;
@@ -184,6 +150,8 @@ public class AspireFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+
         // Inflate the layout for this fragment
         RootView = inflater.inflate(R.layout.fragment_aspire, container, false);
         mRecycler = RootView.findViewById(R.id.aspire_recycler);
@@ -207,101 +175,16 @@ public class AspireFragment extends Fragment implements View.OnClickListener {
         mStorage = FirebaseStorage.getInstance().getReference();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Auxomate").child(key);
 
-        imageButtonAdd = RootView.findViewById(R.id.aspire_imgbutton_add);
-        imageButtonAdd.setOnClickListener(this);
-        editTextDesc = RootView.findViewById(R.id.aspire_edittext_description);
-        buttonSubmit = RootView.findViewById(R.id.aspire_button_submit);
-        buttonSubmit.setOnClickListener(this);
+
         mProgress= new ProgressDialog(getActivity());
 
     }
 
-    private void postToFirebase() {
-
-        Log.d("postToFirebase",resultUri.toString());
-        mProgress.setMessage("Posting");
-        mProgress.show();
-        final String des_val = editTextDesc.getText().toString().trim();
-
-        if(!TextUtils.isEmpty(des_val) && resultUri != null){
-            try {
-                Bitmap bitmap =
-                        scaleBitmapDown(
-                                MediaStore.Images.Media.getBitmap(applicationContext.getContentResolver(), resultUri),
-                                MAX_DIMENSION);
-
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-                String path = MediaStore.Images.Media.insertImage(applicationContext.getContentResolver(), bitmap, "Title", null);
-                uploadUri = Uri.parse(path);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            final StorageReference filepath = mStorage.child("AuxoImage").child(uploadUri.getLastPathSegment());
-
-
-            UploadTask uploadTask = filepath.putFile(uploadUri);
-            //                    DatabaseReference newPost = mDatabase.push();
-//                    newPost.child("title").setValue(title_val);
-//                    newPost.child("description").setValue(des_val);
-//                    newPost.child("image").setValue(mStorage.getDownloadUrl().toString());
-//
-//                    mProgress.dismiss();
-//                    startActivity(new Intent(AddPostAspire.this,HomeActivity.class));
-            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    if (!task.isSuccessful()) {
-                        throw task.getException();
-                    }
-
-                    // Continue with the task to get the download URL
-                    return filepath.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()) {
-                        Uri downloadUri = task.getResult();
-                        DatabaseReference newPost = mDatabase.push();
-                        newPost.child("description").setValue(des_val);
-                        newPost.child("image").setValue(downloadUri.toString());
-                        mProgress.dismiss();
-                        editTextDesc.setText("");
-
-                        //startActivity(new Intent(AddPostAspire.this,HomeActivity.class));
-                    } else {
-                        // Handle failures
-                        // ...
-                        mProgress.dismiss();
-                        Toast.makeText(getActivity(), "Something went wrong while adding post!", Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
 
 
 
 
-        }
-    }
 
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == RESULT_OK) {
-                resultUri = result.getUri();
-
-                imageButtonAdd.setImageURI(resultUri);
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Exception error = result.getError();
-            }
-        }
-    }
 
     public static AspireFragment newInstance(String title) {
 
@@ -312,23 +195,20 @@ public class AspireFragment extends Fragment implements View.OnClickListener {
         return fragment;
     }
 
-    private Bitmap scaleBitmapDown(Bitmap bitmap, int maxDimension) {
 
-        int originalWidth = bitmap.getWidth();
-        int originalHeight = bitmap.getHeight();
-        int resizedWidth = maxDimension;
-        int resizedHeight = maxDimension;
 
-        if (originalHeight > originalWidth) {
-            resizedHeight = maxDimension;
-            resizedWidth = (int) (resizedHeight * (float) originalWidth / (float) originalHeight);
-        } else if (originalWidth > originalHeight) {
-            resizedWidth = maxDimension;
-            resizedHeight = (int) (resizedWidth * (float) originalHeight / (float) originalWidth);
-        } else if (originalHeight == originalWidth) {
-            resizedHeight = maxDimension;
-            resizedWidth = maxDimension;
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.add_menu_aspire,menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId()==R.id.add_aspire_action){
+            startActivity(new Intent(getActivity(),AddPostAspire.class));
         }
-        return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
+        return super.onOptionsItemSelected(item);
     }
 }
