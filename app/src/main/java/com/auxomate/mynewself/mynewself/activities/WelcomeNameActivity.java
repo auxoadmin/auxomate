@@ -37,7 +37,7 @@ public class WelcomeNameActivity extends AppCompatActivity implements View.OnCli
     private PrefManager prefManager;
     EditText nameEdt;
 
-    private ViewPager viewPagerFrags;
+    public ViewPager viewPagerFrags;
     public Button buttonNext, buttonSkip;
     public boolean isUserSet = false;
 
@@ -79,13 +79,14 @@ public class WelcomeNameActivity extends AppCompatActivity implements View.OnCli
 
         buttonNext = findViewById(R.id.welcomename_button_next);
         buttonNext.setOnClickListener(this);
-        buttonNext.setVisibility(View.GONE);
+        buttonNext.setVisibility(View.VISIBLE);
 
         buttonSkip = findViewById(R.id.welcomename_button_skip);
         buttonSkip.setOnClickListener(this);
 
         viewPagerFrags = findViewById(R.id.welcomname_viewpager_frags);
         setupViewPager(viewPagerFrags);
+        viewPagerFrags.setOffscreenPageLimit(0);
 
         viewPagerFrags.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -98,14 +99,16 @@ public class WelcomeNameActivity extends AppCompatActivity implements View.OnCli
                 switch (position){
                     case 0:
                         buttonSkip.setVisibility(View.GONE);
-                        buttonNext.setVisibility(View.GONE);
+                        buttonNext.setVisibility(View.VISIBLE);
                         break;
                     case 1:
                         buttonSkip.setVisibility(View.GONE);
+                        buttonNext.setText("Begin reinventing yourself!!!");
                         buttonNext.setVisibility(View.VISIBLE);
                         break;
                     case 2:
                         buttonSkip.setVisibility(View.VISIBLE);
+                        buttonNext.setText("SKIP");
                         buttonNext.setVisibility(View.VISIBLE);
                         break;
                     case 3:
@@ -244,23 +247,5 @@ public class WelcomeNameActivity extends AppCompatActivity implements View.OnCli
 
 
 
-    private Bitmap scaleBitmapDown(Bitmap bitmap, int maxDimension) {
 
-        int originalWidth = bitmap.getWidth();
-        int originalHeight = bitmap.getHeight();
-        int resizedWidth = maxDimension;
-        int resizedHeight = maxDimension;
-
-        if (originalHeight > originalWidth) {
-            resizedHeight = maxDimension;
-            resizedWidth = (int) (resizedHeight * (float) originalWidth / (float) originalHeight);
-        } else if (originalWidth > originalHeight) {
-            resizedWidth = maxDimension;
-            resizedHeight = (int) (resizedWidth * (float) originalHeight / (float) originalWidth);
-        } else if (originalHeight == originalWidth) {
-            resizedHeight = maxDimension;
-            resizedWidth = maxDimension;
-        }
-        return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
-    }
 }

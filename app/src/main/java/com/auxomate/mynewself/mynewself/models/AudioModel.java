@@ -7,9 +7,20 @@ public class AudioModel {
 
     }
 
-    public AudioModel(String audioName, String audioUrl) {
+   int position;
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public AudioModel(String audioName, String audioUrl,int position) {
         this.name = audioName;
         this.url = audioUrl;
+        this.position = position;
     }
 
 
@@ -29,4 +40,5 @@ public class AudioModel {
     public void setUrl(String audioUrl) {
         this.url = audioUrl;
     }
+
 }

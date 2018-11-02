@@ -1,21 +1,36 @@
 package com.auxomate.mynewself.mynewself.fragments;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -25,22 +40,66 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.auxomate.mynewself.mynewself.BuildConfig;
+import com.auxomate.mynewself.mynewself.activities.AddPostAspire;
+import com.auxomate.mynewself.mynewself.activities.AddTask;
+import com.auxomate.mynewself.mynewself.activities.Main2Activity;
+import com.auxomate.mynewself.mynewself.activities.MainActivity;
+import com.auxomate.mynewself.mynewself.activities.TaskSubmit;
+import com.auxomate.mynewself.mynewself.utilities.PackageManagerUtils;
 import com.auxomate.mynewself.mynewself.utilities.PrefManager;
 import com.auxomate.mynewself.mynewself.R;
 import com.auxomate.mynewself.mynewself.models.AudioModel;
+import com.auxomate.mynewself.mynewself.utilities.RecordDialog;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.vision.v1.Vision;
+import com.google.api.services.vision.v1.VisionRequest;
+import com.google.api.services.vision.v1.VisionRequestInitializer;
+import com.google.api.services.vision.v1.model.AnnotateImageRequest;
+import com.google.api.services.vision.v1.model.AnnotateImageResponse;
+import com.google.api.services.vision.v1.model.BatchAnnotateImagesRequest;
+import com.google.api.services.vision.v1.model.BatchAnnotateImagesResponse;
+import com.google.api.services.vision.v1.model.Feature;
+import com.google.api.services.vision.v1.model.Image;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
+import net.alhazmy13.wordcloud.ColorTemplate;
+import net.alhazmy13.wordcloud.WordCloud;
+import net.alhazmy13.wordcloud.WordCloudView;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
+
+import static android.app.Activity.RESULT_OK;
+import static android.os.FileObserver.DELETE;
 
 
 /**
@@ -75,6 +134,24 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
     DatabaseReference mDatabase;
     private MediaRecorder mRecorder = null;
     private PrefManager prefManager;
+    private Paint p = new Paint();
+    RecordDialog recordDialog;
+    String key ;
+    String keynode;
+    AudioModel audioModel;
+    FirebaseRecyclerAdapter<AudioModel,AwareViewHolder> firebaseRecyclerAdapter;
+
+    private static final String CLOUD_VISION_API_KEY = BuildConfig.API_KEY;
+    public static final String FILE_NAME = "temp.jpg";
+    private static final String ANDROID_CERT_HEADER = "X-Android-Cert";
+    private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
+    private static final int MAX_LABEL_RESULTS = 10;
+    private static final int MAX_DIMENSION = 1200;
+    ProgressDialog mProgress;
+    public static Activity context=null;
+    private static String visionString;
+    List<WordCloud> items;
+    View RootView;
 
 
 
@@ -175,10 +252,12 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        String key = PrefManager.getString(getActivity(),PrefManager.PRF_USERKEY);
+        setHasOptionsMenu(true);
 
-        final View RootView = inflater.inflate(R.layout.fragment_aware, container, false);
+        String key = PrefManager.getString(getActivity(),PrefManager.PRF_USERKEY);
+        RootView = inflater.inflate(R.layout.fragment_aware, container, false);
         storageRef = FirebaseStorage.getInstance().getReference();
+
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Recordings").child(key);
 
 
@@ -198,6 +277,8 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
 
 
 
+
+
         recordBtnStop.setEnabled(false);
         recordBtnPlay.setEnabled(false);
 
@@ -205,48 +286,165 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
         String namFile =  "Auxomate";
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFileName += "/recorded_audio.3gp";
+        mProgress = new ProgressDialog(getActivity());
         // Inflate the layout for this fragment
+        initSwipe();
 
         return RootView;
+    }
+
+    private void initSwipe() {
+
+
+
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT ) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+
+
+
+
+
+                if (direction == ItemTouchHelper.LEFT) {
+                    firebaseRecyclerAdapter.getRef(position).removeValue();
+                    firebaseRecyclerAdapter.notifyItemRemoved(position);
+                    recyclerView.invalidate();
+                    Toast.makeText(getActivity(), "delete", Toast.LENGTH_SHORT).show();
+
+                    Log.d("keynode",keynode);
+
+                   // adapter.removeItem(position);
+
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+                Bitmap icon;
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+
+                    View itemView = viewHolder.itemView;
+                    float height = (float) itemView.getBottom() - (float) itemView.getTop();
+                    float width = height / 3;
+
+                    if (dX < 0) {
+//                        p.setColor(Color.parseColor("#388E3C"));
+//                        RectF background = new RectF((float) itemView.getLeft(), (float) itemView.getTop(), dX, (float) itemView.getBottom());
+//                        c.drawRect(background, p);
+//                        icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_edit_white);
+//                        RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float) itemView.getTop() + width, (float) itemView.getLeft() + 2 * width, (float) itemView.getBottom() - width);
+//                        c.drawBitmap(icon, null, icon_dest, p);
+
+                        p.setColor(Color.parseColor("#D32F2F"));
+                        RectF background = new RectF((float) itemView.getRight() + dX, (float) itemView.getTop(), (float) itemView.getRight(), (float) itemView.getBottom());
+                        c.drawRect(background, p);
+                        icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_delete_white);
+                        RectF icon_dest = new RectF((float) itemView.getRight() - 2 * width, (float) itemView.getTop() + width, (float) itemView.getRight() - width, (float) itemView.getBottom() - width);
+                        c.drawBitmap(icon, null, icon_dest, p);
+                    }
+//                    else {
+//                        p.setColor(Color.parseColor("#D32F2F"));
+//                        RectF background = new RectF((float) itemView.getRight() + dX, (float) itemView.getTop(), (float) itemView.getRight(), (float) itemView.getBottom());
+//                        c.drawRect(background, p);
+//                        icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_delete_white);
+//                        RectF icon_dest = new RectF((float) itemView.getRight() - 2 * width, (float) itemView.getTop() + width, (float) itemView.getRight() - width, (float) itemView.getBottom() - width);
+//                        c.drawBitmap(icon, null, icon_dest, p);
+//                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-        FirebaseRecyclerAdapter<AudioModel,AwareViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<AudioModel, AwareViewHolder>(
+         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<AudioModel, AwareViewHolder>(
                 AudioModel.class,
                 R.layout.listitem_recycler,
                 AwareViewHolder.class,
                 mDatabase
         ) {
+
+            public int position;
+
+            public int getPosition() {
+                return position;
+            }
+
+            public void setPosition(int position) {
+                this.position = position;
+            }
             @Override
             protected void populateViewHolder(AwareViewHolder viewHolder, AudioModel model, int position) {
                 viewHolder.setName(model.getName());
                 viewHolder.setUrl(model.getUrl());
 
+                viewHolder.textView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        model.setPosition(position);
+
+                       // setPosition(position);
+                        return false;
+                    }
+                });
+
+                keynode= this.getRef(position).getKey();
+
+
+
+
             }
+
+
         };
+
         recyclerView.setAdapter(firebaseRecyclerAdapter);
+
+
+
+
+
 
     }
 
+
+
     public static class AwareViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         View mView;
+        TextView textView;
+
         public AwareViewHolder(View itemView) {
             super(itemView);
 
-            mView=itemView;
+            mView = itemView;
             mView.setOnCreateContextMenuListener(this);
+
         }
 
-        public void setName(String name ){
-            TextView textView = mView.findViewById(R.id.aware_recycler_tv);
+        public void setName(String name) {
+            textView = mView.findViewById(R.id.aware_recycler_tv);
             textView.setText(name);
         }
 
-        public void setUrl(final String url){
-            Log.d("AudioUrl",url);
+
+        public void setUrl(final String url) {
+
             ImageButton imageButton = mView.findViewById(R.id.aware_recycler_btn);
             imageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -262,8 +460,7 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
                         });
                         mediaPlayer.prepare();
 
-                    }
-                    catch (IOException e){
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
@@ -274,14 +471,15 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            menu.add(this.getAdapterPosition(), v.getId(), 0, "Delete");
-
-
+            menu.add(0, DELETE, 0, "Delete");
         }
-
-
-
     }
+
+
+
+
+
+
 
 
 
@@ -333,9 +531,21 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
         {
             case R.id.recordBtn:
 
-                    startRecording();
-                    recordBtn.setEnabled(false);
-                    recordBtnStop.setEnabled(true);
+
+                recordDialog = RecordDialog.newInstance("Record Audio");
+                recordDialog.setMessage("Press for record");
+                recordDialog.show(getActivity().getFragmentManager(),"TAG");
+                recordDialog.setPositiveButton("Save", new RecordDialog.ClickListener() {
+                    @Override
+                    public void OnClickListener(String path) {
+                        //Toast.makeText(getActivity(),"Save audio: " + path, Toast.LENGTH_LONG).show();
+                        uploadAudio(path);
+                    }
+                });
+
+                  //  startRecording();
+                    //recordBtn.setEnabled(false);
+                    //recordBtnStop.setEnabled(true);
                     //recordBtn.setText("Recording");
 
 
@@ -358,7 +568,7 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
                 recordBtn.setEnabled(true);
                 recordBtnStop.setEnabled(false);
                 recordBtnPlay.setEnabled(true);
-                uploadAudio();
+               // uploadAudio();
                 break;
 
 
@@ -366,7 +576,7 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    private void uploadAudio() {
+    private void uploadAudio(String path) {
 
         LayoutInflater li = LayoutInflater.from(getActivity());
         View cv = li.inflate(R.layout.dialog_recordingname, null);
@@ -382,11 +592,11 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
             public void onClick(View v) {
                 final String s = editText.getText().toString();
                 StorageMetadata metadata = new StorageMetadata.Builder()
-                        .setContentType("audio/3gp")
+                        .setContentType("audio/wav")
                         .build();
                 UploadTask uploadTask ;
-                final StorageReference filepath = storageRef.child("Recordings").child(s+"3gp");
-                Uri uri = Uri.fromFile(new File(mFileName));
+                final StorageReference filepath = storageRef.child("Recordings").child(s+"wav");
+                Uri uri = Uri.fromFile(new File(path));
                 uploadTask = filepath.putFile(uri);
                 Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                     @Override
@@ -395,8 +605,10 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
                             throw task.getException();
                         }
 
+
                         // Continue with the task to get the download URL
                         return filepath.getDownloadUrl();
+
                     }
                 }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
@@ -414,7 +626,9 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
                     }
                 });
                 show.dismiss();
+
             }
+
         });
 
 
@@ -462,6 +676,324 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
         AwareFragment fragment = new AwareFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        int position = -1;
+        DatabaseReference mPostReference = null;
+
+        try {
+            position = audioModel.getPosition();
+
+
+        } catch (Exception e) {
+//            Log.d(TAG, e.getLocalizedMessage(), e);
+            return super.onContextItemSelected(item);
+        }
+
+        switch (item.getItemId()) {
+
+            case 3:
+                //delete message
+
+                if (position!= -1) {
+
+
+                    firebaseRecyclerAdapter.getRef(position).removeValue();
+                    firebaseRecyclerAdapter.notifyItemRemoved(position);
+                    recyclerView.invalidate();
+                    Toast.makeText(getActivity(), "delete", Toast.LENGTH_SHORT).show();
+                }
+
+
+                break;
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.add_menu_aware,menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId()==R.id.add_aware_action){
+            CropImage.activity().setCropShape(CropImageView.CropShape.RECTANGLE).start(getContext(),this);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                uploadImage(resultUri);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
+        }
+    }
+
+
+
+    public void uploadImage(Uri uri) {
+
+        mProgress.setMessage("Processing your image");
+        mProgress.show();
+
+
+        Log.d("uploadImage",uri.toString());
+        if (uri != null) {
+            try {
+                //  scale the image to save on bandwidth
+                Bitmap bitmap =
+                        scaleBitmapDown(
+                                MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),uri),
+                                MAX_DIMENSION);
+
+
+                callCloudVision(bitmap);
+                // mMainImage.setImageBitmap(bitmap);
+
+            } catch (IOException e) {
+                Log.d("AddTask", "Image picking failed because " + e.getMessage());
+                //Toast.makeText(getActivity(), R.string.image_picker_error, Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Log.d("AddTask", "Image picker gave us a null image.");
+            // Toast.makeText(getActivity(), R.string.image_picker_error, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private Vision.Images.Annotate prepareAnnotationRequest(final Bitmap bitmap) throws IOException {
+        HttpTransport httpTransport = AndroidHttp.newCompatibleTransport();
+        JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
+
+        VisionRequestInitializer requestInitializer =
+                new VisionRequestInitializer(CLOUD_VISION_API_KEY) {
+                    /**
+                     * We override this so we can inject important identifying fields into the HTTP
+                     * headers. This enables use of a restricted cloud platform API key.
+                     */
+                    @Override
+                    protected void initializeVisionRequest(VisionRequest<?> visionRequest)
+                            throws IOException {
+                        super.initializeVisionRequest(visionRequest);
+
+                        String packageName = getActivity().getPackageName();
+                        visionRequest.getRequestHeaders().set(ANDROID_PACKAGE_HEADER, packageName);
+
+                        String sig = PackageManagerUtils.getSignature(getActivity().getPackageManager(), packageName);
+
+                        visionRequest.getRequestHeaders().set(ANDROID_CERT_HEADER, sig);
+                    }
+                };
+
+        Vision.Builder builder = new Vision.Builder(httpTransport, jsonFactory, null);
+        builder.setVisionRequestInitializer(requestInitializer);
+
+        Vision vision = builder.build();
+
+        BatchAnnotateImagesRequest batchAnnotateImagesRequest =
+                new BatchAnnotateImagesRequest();
+        batchAnnotateImagesRequest.setRequests(new ArrayList<AnnotateImageRequest>() {{
+            AnnotateImageRequest annotateImageRequest = new AnnotateImageRequest();
+
+            // Add the image
+            Image base64EncodedImage = new Image();
+            // Convert the bitmap to a JPEG
+            // Just in case it's a format that Android understands but Cloud Vision
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream);
+            byte[] imageBytes = byteArrayOutputStream.toByteArray();
+
+            // Base64 encode the JPEG
+            base64EncodedImage.encodeContent(imageBytes);
+            annotateImageRequest.setImage(base64EncodedImage);
+
+            // add the features we want
+            annotateImageRequest.setFeatures(new ArrayList<Feature>() {{
+                Feature textDetection = new Feature();
+                textDetection.setType("DOCUMENT_TEXT_DETECTION");
+                textDetection.setMaxResults(MAX_LABEL_RESULTS);
+                add(textDetection);
+            }});
+
+            // Add the list of one thing to the request
+            add(annotateImageRequest);
+        }});
+
+        Vision.Images.Annotate annotateRequest =
+                vision.images().annotate(batchAnnotateImagesRequest);
+        // Due to a bug: requests to Vision API containing large images fail when GZipped.
+        annotateRequest.setDisableGZipContent(true);
+        Log.d("AddTask", "created Cloud Vision request object, sending request");
+
+        return annotateRequest;
+    }
+
+    private class TextDetectionTask extends AsyncTask<Object, Void, String> {
+        private final WeakReference<Activity> mActivityWeakReference;
+        private Vision.Images.Annotate mRequest;
+        //public AddTask activity;
+        private  Context mContext;
+
+
+        TextDetectionTask(Activity activity, Vision.Images.Annotate annotate) {
+            mActivityWeakReference = new WeakReference<>(activity);
+            mRequest = annotate;
+        }
+
+        @Override
+        protected String doInBackground(Object... params) {
+            try {
+                Log.d("AddTask", "created Cloud Vision request object, sending request");
+                BatchAnnotateImagesResponse response = mRequest.execute();
+                return convertResponseToString(mContext,response);
+
+
+            } catch (GoogleJsonResponseException e) {
+                Log.d("AddTask", "failed to make API request because " + e.getContent());
+            } catch (IOException e) {
+                Log.d("AddTask", "failed to make API request because of other IOException " +
+                        e.getMessage());
+            }
+            return "Cloud Vision API request failed. Check logs for details.";
+        }
+
+        protected void onPostExecute(String result) {
+            visionString = result;
+            // taskSubmit();
+
+
+            Activity activity = mActivityWeakReference.get();
+            if(activity!=null && !activity.isFinishing()) {
+                mProgress.dismiss();
+                Log.d("result", result);
+
+                String[] data = result.split("\\r?\\n");
+                items = new ArrayList<>();
+                Random random = new Random();
+                for (String s : data) {
+                    items.add(new WordCloud(s,random.nextInt(50)));
+                }
+
+                WordCloudView wordCloud = RootView.findViewById(R.id.wordCloud);
+                wordCloud.setDataSet(items);
+                //wordCloud.setSize(200,200);
+
+                wordCloud.setColors(ColorTemplate.MATERIAL_COLORS);
+                wordCloud.notifyDataSetChanged();
+                wordCloud.getDrawingCache();
+                viewToBitmap(wordCloud);
+
+
+
+
+            }
+            else
+            {
+                Log.d("onPostExecute","Failed");
+            }
+
+
+
+
+        }
+
+
+    }
+
+
+
+    private void callCloudVision(final Bitmap bitmap) {
+        // Switch text to loading
+        //mImageDetails.setText(R.string.loading_message);
+
+        // Do the real work in an async task, because we need to use the network anyway
+        try {
+            AsyncTask<Object, Void, String> textDetectionTask = new  TextDetectionTask(getActivity(), prepareAnnotationRequest(bitmap));
+            textDetectionTask.execute();
+        } catch (IOException e) {
+            Log.d("AddTask", "failed to make API request because of other IOException " +
+                    e.getMessage());
+        }
+    }
+
+
+
+    private static String convertResponseToString(Context ctx, BatchAnnotateImagesResponse response) {
+        StringBuilder message = new StringBuilder("");
+
+
+
+
+        //   BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
+        List<AnnotateImageResponse> responses = response.getResponses();
+
+        for (AnnotateImageResponse res : responses) {
+            if (res == null) {
+                Toast.makeText(ctx, "Error", Toast.LENGTH_SHORT).show();
+
+            }
+            String pageList = res.getFullTextAnnotation().getText();
+            Log.d("VisionList",pageList);
+
+            // For full list of available annotations, see http://g.co/cloud/vision/docs
+
+            message.append(String.format(Locale.US, "%s", res.getFullTextAnnotation().getText()));
+            message.append("\n");
+
+        }
+
+
+
+
+        return message.toString();
+    }
+    private Bitmap scaleBitmapDown(Bitmap bitmap, int maxDimension) {
+
+        int originalWidth = bitmap.getWidth();
+        int originalHeight = bitmap.getHeight();
+        int resizedWidth = maxDimension;
+        int resizedHeight = maxDimension;
+
+        if (originalHeight > originalWidth) {
+            resizedHeight = maxDimension;
+            resizedWidth = (int) (resizedHeight * (float) originalWidth / (float) originalHeight);
+        } else if (originalWidth > originalHeight) {
+            resizedWidth = maxDimension;
+            resizedHeight = (int) (resizedWidth * (float) originalHeight / (float) originalWidth);
+        } else if (originalHeight == originalWidth) {
+            resizedHeight = maxDimension;
+            resizedWidth = maxDimension;
+        }
+        return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
+    }
+
+    public Bitmap viewToBitmap(View view){
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(),view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        Log.d("worldCloude","canvas created");
+        try{
+            FileOutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory().getAbsoluteFile() +"/file.png");
+            bitmap.compress(Bitmap.CompressFormat.PNG,100,output);
+            Toast.makeText(getActivity(), "WorldCloudSaved", Toast.LENGTH_SHORT).show();
+            Log.d("worldCloude","imagesaved");
+            output.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 }
 

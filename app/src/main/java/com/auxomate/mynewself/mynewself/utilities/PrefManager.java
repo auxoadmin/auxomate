@@ -27,11 +27,11 @@ public class PrefManager {
     private SharedPreferences.Editor prefsEditor;
 
     private static final String reminderStatus="reminderStatus";
-    private static final String tonehour="hour";
-    private static final String tonemin="min";
+    public static final String tonehour="hour";
+    public static final String tonemin="min";
 
-    private static final String ttwohour="hour";
-    private static final String ttwomin="min";
+    public static final String ttwohour="hour";
+    public static final String ttwomin="min";
 
     private static final String tthreehour="hour";
     private static final String tthreemin="min";
@@ -46,11 +46,14 @@ public class PrefManager {
     private static final String vthreemin="min";
 
 
-    public static final String TASK1 = "Task 1";
+    public static final String TASK1Time = "Task 1";
+    public static final String TASK2Time = "Task 2";
+    public static final String TASK3Time = "Task3";
+    public static final String V1Time = "V 1";
+    public static final String V2Time = "V 2";
+    public static final String V3Time = "V 3";
+
     public static final String TASK1_DES = "task1_des";
-
-
-    public static final String TASK2 = "Task 2";
     public static final String TASK2_DES = "task2_des";
     public static final String TASK3_DES = "task3_des";
 
@@ -81,7 +84,7 @@ public class PrefManager {
         return appSharedPrefs.getInt(tonehour, 20);
     }
 
-    public void set_tonehour(int h)
+    public void set_tonehour( int h)
     {
         prefsEditor.putInt(tonehour, h);
         prefsEditor.commit();

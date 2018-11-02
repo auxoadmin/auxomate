@@ -34,13 +34,7 @@
         android:text="Save"
         android:textAllCaps="false"
         android:theme="@style/Widget.AppCompat.Button.Borderless.Colored"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/dialog_btn_delete"
-            android:text="Delete"
-            android:textAllCaps="false"
-            android:theme="@style/Widget.AppCompat.Button.Borderless.Colored"/>
+
     </LinearLayout>
 
 </LinearLayout>

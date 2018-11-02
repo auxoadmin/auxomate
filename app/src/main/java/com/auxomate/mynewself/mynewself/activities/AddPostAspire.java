@@ -3,6 +3,7 @@ package com.auxomate.mynewself.mynewself.activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -20,7 +21,10 @@ import android.widget.Toast;
 
 import com.auxomate.mynewself.mynewself.R;
 import com.auxomate.mynewself.mynewself.fragments.AspireFragment;
+import com.auxomate.mynewself.mynewself.fragments.AwareFragment;
+import com.auxomate.mynewself.mynewself.models.AudioModel;
 import com.auxomate.mynewself.mynewself.utilities.PrefManager;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -50,6 +54,7 @@ public class AddPostAspire extends AppCompatActivity implements View.OnClickList
     Uri uploadUri;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +71,7 @@ public class AddPostAspire extends AppCompatActivity implements View.OnClickList
         key = PrefManager.getString(getApplicationContext(),PrefManager.PRF_USERKEY);
 
         mStorage = FirebaseStorage.getInstance().getReference();
+
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Auxomate").child(key);
 
         imageButton=findViewById(R.id.aspire_imgbutton_add);

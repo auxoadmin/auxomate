@@ -18,7 +18,7 @@
             android:layout_height="170dp"
             android:id="@+id/aspire_imgbutton_add"
             android:adjustViewBounds="true"
-            android:scaleType="fitXY"
+            android:scaleType="centerInside"
             android:src="@drawable/add_btn"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"

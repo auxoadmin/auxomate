@@ -115,7 +115,7 @@ public class AddTask extends AppCompatActivity {
 
     public void uploadImage(Uri uri) {
 
-        mProgress.setMessage("Rendaring Your Image");
+        mProgress.setMessage("Processing your image");
        mProgress.show();
 
 

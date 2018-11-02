@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.auxomate.mynewself.mynewself.R;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -52,7 +54,20 @@ public class AspireViewPageAdapter extends PagerAdapter {
         TextView tv = view.findViewById(R.id.aspire_gallery_des);
         Picasso.with(context)
                 .load(imageUrls.get(position)).resize(800,1500)
-                .centerCrop().into(imageView);
+                .centerCrop().networkPolicy(NetworkPolicy.OFFLINE).into(imageView, new Callback() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onError() {
+                Picasso.with(context)
+                        .load(imageUrls.get(position)).resize(800,1500)
+                        .centerCrop().into(imageView);
+
+            }
+        });
         tv.setText(desc.get(position));
         container.addView(view);
         return  view;

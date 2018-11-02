@@ -55,7 +55,7 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
     PrefManager localData;
     AspireGallery aspireGallery;
 
-    int hour, min;
+    private static int tOnehour, tOnemin,tTwohour,tTwomin,tThreehour,tThreemin,vOnehour,vOnemin,vTwohour,vTwomin,vThreehour,vThreemin;
 
     ClipboardManager myClipboard;
 
@@ -152,6 +152,8 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
 
             case R.id.tasksubmit_button_submit:
 
+
+
                 submitTheTask();
 
                 break;
@@ -171,10 +173,10 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
                             amPm = "AM";
                         }
 
-                        Log.d(TAG, "onTimeSet: hour " + hourOfDay);
-                        Log.d(TAG, "onTimeSet: min " + minutes);
                         localData.set_tonehour(hourOfDay);
                         localData.set_tonemin(minutes);
+
+
                         //scheduleNotification(getNotification("Task 1"),hourOfDay,minutes,1);
                         NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, localData.get_tonehour(), localData.get_tonemin(),1);
 
@@ -201,6 +203,8 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
                         }
                         localData.set_ttwohour(hourOfDay);
                         localData.set_ttwomin(minutes);
+
+
                         //scheduleNotification(getNotification("Task 2"),hourOfDay,minutes,2);
                         NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, localData.get_ttwohour(), localData.get_ttwomin(),2);
 
@@ -224,10 +228,14 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
                         } else {
                             amPm = "AM";
                         }
+
                         localData.set_tthreehour(hourOfDay);
                         localData.set_tthreemin(minutes);
+
                         //scheduleNotification(getNotification("Task 3"),hourOfDay,minutes,3);
                         NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, localData.get_tthreehour(), localData.get_tthreemin(),3);
+                        Log.d("getHourFromPref",localData.get_tonehour()+":"+localData.get_vonemin());
+
 
                         editTextSchTThreeTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
                     }
@@ -249,8 +257,10 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
                         } else {
                             amPm = "AM";
                         }
+
                         localData.set_vonehour(hourOfDay);
                         localData.set_vonemin(minutes);
+
                         //scheduleNotification(getNotification("Visulization 1"),hourOfDay,minutes,4);
                         NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, localData.get_vonehour(), localData.get_vonemin(),4);
 
@@ -274,6 +284,7 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
                         } else {
                             amPm = "AM";
                         }
+
                         localData.set_vtwohour(hourOfDay);
                         localData.set_vtwoemin(minutes);
                        // scheduleNotification(getNotification("Visulization 2"),hourOfDay,minutes,5);
@@ -300,8 +311,10 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
                         } else {
                             amPm = "AM";
                         }
+
                         localData.set_vthreehour(hourOfDay);
                         localData.set_vthreemin(minutes);
+
                         //scheduleNotification(getNotification("Visulization 3"),hourOfDay,minutes,6);
 
                         NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, localData.get_vthreehour(), localData.get_vthreemin(),6);
@@ -319,6 +332,8 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
 
 
         }
+
+
 
     }
 
@@ -342,9 +357,15 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
         PrefManager.putString(this,PrefManager.TASK1_DES,taskOneDesc);
         PrefManager.putString(this,PrefManager.TASK2_DES,taskTwoDesc);
         PrefManager.putString(this,PrefManager.TASK3_DES,taskThreeDesc);
-
+        PrefManager.putString(this,PrefManager.TASK1Time,scheduleTaskOneTime);
+        PrefManager.putString(this,PrefManager.TASK2Time,scheduleTaskTwoTime);
+        PrefManager.putString(this,PrefManager.TASK3Time,scheduleTaskThreeTime);
+        PrefManager.putString(this,PrefManager.V1Time,scheduleVOneTime);
+        PrefManager.putString(this,PrefManager.V2Time,scheduleVTwoTime);
+        PrefManager.putString(this,PrefManager.V3Time,scheduleVThreeTime);
         //use it as you need...
-        Intent i = new Intent(this,HomeActivity.class);
+        Intent i = new Intent(this,Main2Activity.class);
+        i.putExtra("quote",taskOneDesc);
         startActivity(i);
 
 

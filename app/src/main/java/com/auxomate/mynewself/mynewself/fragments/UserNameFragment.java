@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.auxomate.mynewself.mynewself.R;
+import com.auxomate.mynewself.mynewself.activities.WelcomeActivity;
 import com.auxomate.mynewself.mynewself.activities.WelcomeNameActivity;
 import com.auxomate.mynewself.mynewself.utilities.PrefManager;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,6 +33,7 @@ public class UserNameFragment extends Fragment {
 
     private View view;
     private EditText editTextName;
+
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
     private boolean isDone;
@@ -47,6 +49,7 @@ public class UserNameFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_user_name, container, false);
+   
 
         init();
 
@@ -58,11 +61,11 @@ public class UserNameFragment extends Fragment {
 
         editTextName = view.findViewById(R.id.username_edittext_username);
         buttonSubmit = view.findViewById(R.id.usename_button_submit);
+        buttonSubmit.setVisibility(View.GONE);
 
-        buttonSubmit.setOnClickListener(new View.OnClickListener() {
+        ((WelcomeNameActivity)getActivity()).buttonNext.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-
+            public void onClick(View view) {
                 String name = editTextName.getText().toString().trim();
 
                 if (TextUtils.isEmpty(name)){
@@ -87,8 +90,9 @@ public class UserNameFragment extends Fragment {
                                 PrefManager.putString(getActivity(),PrefManager.PRF_USERKEY,key);
 
                                 PrefManager.putBoolean(getActivity(),PrefManager.PRF_WELCOME_BOARDS,true);
-                                Toast.makeText(getActivity(), "User created!", Toast.LENGTH_LONG).show();
-                                ((WelcomeNameActivity)getActivity()).buttonNext.setVisibility(View.VISIBLE);
+                                // Toast.makeText(getActivity(), "User created!", Toast.LENGTH_LONG).show();
+                                ((WelcomeNameActivity)getActivity()).viewPagerFrags.setCurrentItem(((WelcomeNameActivity)getActivity()).viewPagerFrags.getCurrentItem()+1, true);
+
                             } else {
                                 progressDialog.dismiss();
                                 Log.e("User_ADD", Objects.requireNonNull(task.getException()).getMessage());
@@ -98,10 +102,14 @@ public class UserNameFragment extends Fragment {
                         }
                     });
 
+
+
                 }
 
             }
         });
+
+
 
 
     }

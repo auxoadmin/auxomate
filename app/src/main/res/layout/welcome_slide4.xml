@@ -43,7 +43,7 @@
                 android:layout_marginTop="20dp"
                 android:paddingLeft="@dimen/desc_padding"
                 android:paddingRight="@dimen/desc_padding"
-                android:text="takes and visualization syncs to your calender and make memorizable"
+                android:text="We will help make your tasks and visualizations actionable"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/slide_desc" />

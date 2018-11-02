@@ -18,6 +18,7 @@ public class UserWelcomeFragment extends Fragment {
 
     private View view;
     private TextView textViewName;
+    boolean isFragmentLoaded = false;
 
     public UserWelcomeFragment() {
         // Required empty public constructor
@@ -38,9 +39,21 @@ public class UserWelcomeFragment extends Fragment {
     private void init() {
 
         textViewName = view.findViewById(R.id.userwelcome_textview_name);
-        String name = PrefManager.getString(getActivity(),PrefManager.PRF_USERNAME_WELCOME);
-        textViewName.setText(name);
 
+
+    }
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && !isFragmentLoaded) {
+            //Load Your Data Here like.... new GetContacts().execute();
+            String name = PrefManager.getString(getActivity(),PrefManager.PRF_USERNAME_WELCOME);
+            textViewName.setText(name);
+
+            isFragmentLoaded = true;
+        }
+        else{
+        }
     }
 
 }

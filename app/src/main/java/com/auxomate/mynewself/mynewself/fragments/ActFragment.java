@@ -5,12 +5,14 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
@@ -70,8 +72,13 @@ import static android.app.Activity.RESULT_OK;
 public class ActFragment extends Fragment {
     //EditText task1;
 
-    TextView taskoneDes,tasktwoDes,taskthreeDes,taskoneTime,tasktwoTime,taskthreeTime,visualoneTime,visualtwoTime,
+    EditText taskoneDes,tasktwoDes,taskthreeDes,taskoneTime,tasktwoTime,taskthreeTime,visualoneTime,visualtwoTime,
             visualthreeTime;
+    ImageButton editTask;
+    PrefManager prefManager;
+
+
+
 
 
     private static final int GALLERY_PERMISSIONS_REQUEST = 0;
@@ -93,6 +100,7 @@ public class ActFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         setHasOptionsMenu(true);
         RootView = inflater.inflate(R.layout.fragment_act, container, false);
@@ -100,19 +108,55 @@ public class ActFragment extends Fragment {
 
 
         taskoneDes = RootView.findViewById(R.id.actFrament_edittext_pttaskone);
+        taskoneDes.setEnabled(false);
+
+
         tasktwoDes = RootView.findViewById(R.id.actFrament_edittext_sttasktwo);
+        tasktwoDes.setEnabled(false);
+
         taskthreeDes = RootView.findViewById(R.id.actFrament_edittext_sttaskthree);
+        taskthreeDes.setEnabled(false);
+
         taskoneTime = RootView.findViewById(R.id.actFrament_edittext_schttaskonetime);
+        taskoneTime.setEnabled(false);
+
         tasktwoTime = RootView.findViewById(R.id.actFrament_edittext_schttasktwotime);
+        tasktwoTime.setEnabled(false);
+
         taskthreeTime = RootView.findViewById(R.id.actFrament_edittext_schttaskthreetime);
+        taskthreeTime.setEnabled(false);
+
         visualoneTime = RootView.findViewById(R.id.actFrament_edittext_schvonetime);
+        visualoneTime.setEnabled(false);
+
         visualtwoTime = RootView.findViewById(R.id.actFrament_edittext_schvtwotime);
+        visualtwoTime.setEnabled(false);
+
         visualthreeTime = RootView.findViewById(R.id.actFrament_edittext_schvthreetime);
+        visualthreeTime.setEnabled(false);
+
+        editTask = RootView.findViewById(R.id.act_imgbtn_edit);
 
 
         taskoneDes.setText(PrefManager.getString(getActivity(),PrefManager.TASK1_DES));
         tasktwoDes.setText(PrefManager.getString(getActivity(),PrefManager.TASK2_DES));
         taskthreeDes.setText(PrefManager.getString(getActivity(),PrefManager.TASK3_DES));
+
+
+
+
+        taskoneTime.setText(PrefManager.getString(getActivity(),PrefManager.TASK1Time));
+        tasktwoTime.setText(PrefManager.getString(getActivity(),PrefManager.TASK2Time));
+        taskthreeTime.setText(PrefManager.getString(getActivity(),PrefManager.TASK3Time));
+        visualoneTime.setText(PrefManager.getString(getActivity(),PrefManager.V1Time));
+        visualtwoTime.setText(PrefManager.getString(getActivity(),PrefManager.V2Time));
+        visualthreeTime.setText(PrefManager.getString(getActivity(),PrefManager.V3Time));
+
+
+
+
+
+
 //        taskoneTime.setText(PrefManager.getString(getActivity(),PrefManager.));
 //        tasktwoTime.setText(PrefManager.getString(getActivity(),PrefManager.TASK3_DES));
 //        taskthreeTime.setText(PrefManager.getString(getActivity(),PrefManager.TASK3_DES));
@@ -122,18 +166,22 @@ public class ActFragment extends Fragment {
 
 
 
+        editTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(),TaskSubmit.class));
+//                taskoneDes.setEnabled(true);
+//                tasktwoDes.setEnabled(true);
+//                taskthreeDes.setEnabled(true);
+//                taskoneTime.setEnabled(true);
+//                tasktwoTime.setEnabled(true);
+//                taskthreeTime.setEnabled(true);
+//                visualoneTime.setEnabled(true);
+//                visualtwoTime.setEnabled(true);
+//                visualthreeTime.setEnabled(true);
 
-
-
-
-
-
-
-
-
-
-
-
+            }
+        });
         return RootView;
     }
 
@@ -164,5 +212,12 @@ public class ActFragment extends Fragment {
         ActFragment fragment = new ActFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        prefManager = new PrefManager(context);
+
+
     }
 }

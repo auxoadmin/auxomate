@@ -56,7 +56,7 @@ public class HomeActivity extends AppCompatActivity  {
     public String fromWhere="";
 
 ActionBar toolbar ;
-   //private ActionBar toolbar;
+
    PrefManager prefManager;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -117,8 +117,8 @@ ActionBar toolbar ;
 //        fragmentsList.add(AspireFragment.newInstance("Aspire"));
 //        fragmentsList.add(ActFragment.newInstance("Act"));
 //        fragmentsList.add(UserprofileFragment.newInstance("User Profile"));
-//        toolbar = findViewById(R.id.toolbar);
-
+//        //toolbar = findViewById(R.id.toolbar);
+//
 //        Allagi allagi = Allagi.initialize(HomeActivity.this, menuList, imagesList, fragmentsList);
 //        allagi.start();
 

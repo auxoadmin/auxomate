@@ -53,6 +53,7 @@ public class AspireGallery extends AppCompatActivity {
         desc = new ArrayList<>();
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Auxomate").child(key);
+        mDatabase.keepSynced(true);
         mDatabase.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
