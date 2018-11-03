@@ -150,8 +150,10 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
     ProgressDialog mProgress;
     public static Activity context=null;
     private static String visionString;
+    String wordCloudString = null;
     List<WordCloud> items;
     View RootView;
+
 
 
 
@@ -877,21 +879,19 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
                 mProgress.dismiss();
                 Log.d("result", result);
 
-                String[] data = result.split("\\r?\\n");
-                items = new ArrayList<>();
-                Random random = new Random();
-                for (String s : data) {
-                    items.add(new WordCloud(s,random.nextInt(50)));
-                }
-
                 WordCloudView wordCloud = RootView.findViewById(R.id.wordCloud);
-                wordCloud.setDataSet(items);
-                //wordCloud.setSize(200,200);
 
-                wordCloud.setColors(ColorTemplate.MATERIAL_COLORS);
-                wordCloud.notifyDataSetChanged();
-                wordCloud.getDrawingCache();
-                viewToBitmap(wordCloud);
+                //wordCloudString = getIntent().getStringExtra("wordCloud");
+                Log.d("incomingWordCloudString",result);
+
+
+
+
+                Intent i = new Intent(getActivity(),MainActivity.class);
+                i.putExtra("wordCloud",result);
+                startActivity(i);
+
+
 
 
 
@@ -977,24 +977,8 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
         return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
     }
 
-    public Bitmap viewToBitmap(View view){
-        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(),view.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        view.draw(canvas);
-        Log.d("worldCloude","canvas created");
-        try{
-            FileOutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory().getAbsoluteFile() +"/file.png");
-            bitmap.compress(Bitmap.CompressFormat.PNG,100,output);
-            Toast.makeText(getActivity(), "WorldCloudSaved", Toast.LENGTH_SHORT).show();
-            Log.d("worldCloude","imagesaved");
-            output.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return bitmap;
-    }
+
+
 }
 
 
