@@ -104,43 +104,84 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
         if(getIntent().hasExtra("visionResult")){
 
             String[] split = result.split("(\\s|^)Primary Task(\\s|$)");
-
-
-
             String  stringTask1 = split[1].toString();
             String[] splitTask = stringTask1.split("(\\s|^)Secondary Tasks[\\r\\n]Task 2(\\s|$)|(\\s|^)SecondaryTasks[\\r\\n]Task2(\\s|$)");
             String[] splitTask1 = splitTask[0].split("(\\s|^)Task 1(\\s|$)|(\\s|^)Task1(\\s|$)|(\\s|^)Taski(\\s|$)|(\\s|^)Task i(\\s|$)|(\\s|^)Taskı(\\s|$)|(\\s|^)Task(\\s|$)");
-            editTextPTOne.setText(splitTask1[1]);
+
             String[] splitTask2 = splitTask[1].split("(\\s|^)Task 3(\\s|$)|(\\s|^)Task3(\\s|$)");
-            editTextSTTwo.setText(splitTask2[0]);
+
             String[] splitTask3 = splitTask2[1].split("(\\s|^)Schedule(\\s|$)");
-            editTextSTThree.setText(splitTask3[0]);
+
 
             String[] splitSchedule = result.split("(\\s|^)Schedule Tasks(\\s|$)");
+
+
             String[] splitVisual = splitSchedule[1].split("(\\s|^)Schedule Visualizations(\\s|$)");
+            Log.d("taskTime",splitVisual[0]);
+            Log.d("VisulizationTime",splitVisual[1]);
+
+
+
+
 
             String[] splitvTask3 = splitVisual[0].split("(\\s|^)Task 3(\\s|$)|(\\s|^)Task3(\\s|$)");
             String[] splitvTask2 = splitvTask3[0].split("(\\s|^)Task2(\\s|$)|(\\s|^)Task 2(\\s|$)");
-
-
             String [] vtask = splitvTask2[0].split("(\\s|^)Task 1(\\s|$)|(\\s|^)Task1(\\s|$)|(\\s|^)Taski(\\s|$)|(\\s|^)Task i(\\s|$)|(\\s|^)Taskı(\\s|$)");
-            String  vtask1 = vtask[1].split("/")[0];
-            String  vtask2 = splitvTask2[1].split("/")[0];
-            String  vtask3 = splitvTask3[1].split("/")[0];
-
-            Log.d("splitvTask1",vtask[0]);
-            Log.d("splitdTask1",vtask[1]);
-            Log.d("splitvTask2",splitvTask2[0]);
-            Log.d("splitdTask2",vtask3 );
-            Log.d("splitvTask3",vtask1);
-            Log.d("splitdTask3",vtask2);
+            String  schttask1 = vtask[1].split("AM|PM")[0];
+            String  schttask2 = splitvTask2[1].split("AM|PM")[0];
+            String  schttask3 = splitvTask3[1].split("AM|PM")[0];
 
 
+         String[] visualTime3 = splitVisual[1].split("(\\s|^)v 3(\\s|$)|(\\s|^)v3(\\s|$)|(\\s|^)V3(\\s|$)|(\\s|^)03(\\s|$)");
+         String[] visualTime2 = visualTime3[0].split("(\\s|^)v 2(\\s|$)|(\\s|^)v2(\\s|$)|(\\s|^)V2(\\s|$)");
+         String [] visualTime1 = visualTime2[0].split("(\\s|^)v 1(\\s|$)|(\\s|^)v1(\\s|$)|(\\s|^)V1(\\s|$)|(\\s|^)vi(\\s|$)");
 
+           if(splitTask1[1]!= null && 2<=splitTask1.length) {
+               editTextPTOne.setText(splitTask1[1]);
+           }else {
+               editTextPTOne.setText("Edit manually or try again");
+           }
+            if(splitTask2[0]!= null&& 2<=splitTask2.length) {
+                editTextSTTwo.setText(splitTask2[0]);
+            }else {
+                editTextSTTwo.setText("Edit manually or try again");
+            }
+            if(splitTask3[0]!= null&& 2<=splitTask3.length) {
+                editTextSTThree.setText(splitTask3[0]);
+            }else {
+                editTextSTThree.setText("Edit manually or try again");
+            }
+            if(schttask1!= null&& 2<=vtask.length) {
+                editTextSchTOneTime.setText(schttask1);
+            }else {
+                editTextSchTOneTime.setText("Edit manually or try again");
+            }
 
-            // task1.setText(result);
-
-
+            if(schttask2!= null&& 2<=splitvTask2.length) {
+                editTextSchTTwoTime.setText(schttask2);
+            }else {
+                editTextSchTTwoTime.setText("Edit manually or try again");
+            }
+            if(schttask3!= null&& 2<=splitvTask3.length) {
+                editTextSchTThreeTime.setText(schttask3);
+            }else {
+                editTextSchTThreeTime.setText("Edit manually or try again");
+            }
+            if(visualTime1[1]!= null&& 2<=visualTime1.length) {
+                editTextSchVOneTime.setText(visualTime1[1]);
+            }else {
+                editTextSchVOneTime.setText("Edit manually or try again");
+            }
+            if( 2<=visualTime2.length) {
+                editTextSchVTwoTime.setText(visualTime2[1]);
+            }else {
+                editTextSchVTwoTime.setText("Edit manually or try again");
+            }
+            if( 2<=visualTime3.length) {
+                editTextSchVThreeTime.setText(visualTime3[1]);
+            }else {
+                editTextSchVThreeTime.setText("Edit manually or try again");
+            }
 
         }
     }
@@ -338,6 +379,7 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
     }
 
     private void submitTheTask() {
+        PrefManager prefManager;
 
         String taskOneDesc = editTextPTOne.getText().toString().trim();
         String taskTwoDesc = editTextSTTwo.getText().toString().trim();
@@ -357,15 +399,17 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
         PrefManager.putString(this,PrefManager.TASK1_DES,taskOneDesc);
         PrefManager.putString(this,PrefManager.TASK2_DES,taskTwoDesc);
         PrefManager.putString(this,PrefManager.TASK3_DES,taskThreeDesc);
+
+
         PrefManager.putString(this,PrefManager.TASK1Time,scheduleTaskOneTime);
         PrefManager.putString(this,PrefManager.TASK2Time,scheduleTaskTwoTime);
         PrefManager.putString(this,PrefManager.TASK3Time,scheduleTaskThreeTime);
         PrefManager.putString(this,PrefManager.V1Time,scheduleVOneTime);
         PrefManager.putString(this,PrefManager.V2Time,scheduleVTwoTime);
         PrefManager.putString(this,PrefManager.V3Time,scheduleVThreeTime);
-        //use it as you need...
-        Intent i = new Intent(this,Main2Activity.class);
-        i.putExtra("quote",taskOneDesc);
+
+        Intent i = new Intent(this,HomeActivity.class);
+       // i.putExtra("quote",taskOneDesc);
         startActivity(i);
 
 

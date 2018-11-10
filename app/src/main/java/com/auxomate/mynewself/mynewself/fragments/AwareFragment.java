@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -46,6 +47,7 @@ import com.auxomate.mynewself.mynewself.activities.AddTask;
 import com.auxomate.mynewself.mynewself.activities.Main2Activity;
 import com.auxomate.mynewself.mynewself.activities.MainActivity;
 import com.auxomate.mynewself.mynewself.activities.TaskSubmit;
+import com.auxomate.mynewself.mynewself.models.AspireRecycler;
 import com.auxomate.mynewself.mynewself.utilities.PackageManagerUtils;
 import com.auxomate.mynewself.mynewself.utilities.PrefManager;
 import com.auxomate.mynewself.mynewself.R;
@@ -254,7 +256,7 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+       // setHasOptionsMenu(true);
 
         String key = PrefManager.getString(getActivity(),PrefManager.PRF_USERKEY);
         RootView = inflater.inflate(R.layout.fragment_aware, container, false);
@@ -319,13 +321,15 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
                     firebaseRecyclerAdapter.getRef(position).removeValue();
                     firebaseRecyclerAdapter.notifyItemRemoved(position);
                     recyclerView.invalidate();
-                    Toast.makeText(getActivity(), "delete", Toast.LENGTH_SHORT).show();
 
+                    //Toast.makeText(getActivity(), "delete", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(viewHolder.itemView,"Deleted",Snackbar.LENGTH_SHORT).show();
                     Log.d("keynode",keynode);
 
                    // adapter.removeItem(position);
 
                 } else {
+
 
                 }
             }
@@ -435,7 +439,7 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
             super(itemView);
 
             mView = itemView;
-            mView.setOnCreateContextMenuListener(this);
+           // mView.setOnCreateContextMenuListener(this);
 
         }
 
@@ -499,7 +503,7 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            Toast.makeText(context, "Aware", Toast.LENGTH_SHORT).show();
+
         }
     }
 
@@ -879,9 +883,8 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
                 mProgress.dismiss();
                 Log.d("result", result);
 
-                WordCloudView wordCloud = RootView.findViewById(R.id.wordCloud);
 
-                //wordCloudString = getIntent().getStringExtra("wordCloud");
+
                 Log.d("incomingWordCloudString",result);
 
 

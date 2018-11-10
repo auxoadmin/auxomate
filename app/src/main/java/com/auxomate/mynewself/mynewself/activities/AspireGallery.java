@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.auxomate.mynewself.mynewself.R;
 import com.auxomate.mynewself.mynewself.adapters.AspireViewPageAdapter;
 import com.auxomate.mynewself.mynewself.fragments.AspireFragment;
+import com.auxomate.mynewself.mynewself.models.AspireGalleryModel;
 import com.auxomate.mynewself.mynewself.models.AspireNotificationPager;
 import com.auxomate.mynewself.mynewself.models.AspireRecycler;
 import com.auxomate.mynewself.mynewself.utilities.PrefManager;
@@ -44,6 +45,7 @@ public class AspireGallery extends AppCompatActivity {
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +53,8 @@ public class AspireGallery extends AppCompatActivity {
         key = PrefManager.getString(this,PrefManager.PRF_USERKEY);
         urlList = new ArrayList<>();
         desc = new ArrayList<>();
+
+
 
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Auxomate").child(key);
         mDatabase.keepSynced(true);
@@ -98,18 +102,12 @@ public class AspireGallery extends AppCompatActivity {
     }
 
     private void getImageUrl(DataSnapshot dataSnapshot) {
-        for(DataSnapshot ds : dataSnapshot.getChildren()){
-            AspireNotificationPager ar = dataSnapshot.getValue(AspireNotificationPager.class);
-            urlList.add(ar.getImage());
-            desc.add(ar.getDescription());
-            Log.d("ImageUrlLIst",ar.getImage());
-
-            ViewPager viewPager = findViewById(R.id.aspire_viewpager);
-            AspireViewPageAdapter aspireViewPageAdapter = new AspireViewPageAdapter(AspireGallery.this, urlList,desc);
-            viewPager.setAdapter(aspireViewPageAdapter);
-
-
-        }
+        AspireGalleryModel ar = dataSnapshot.getValue(AspireGalleryModel.class);
+        urlList.add(ar.getImage());
+        desc.add(ar.getDescription());
+        ViewPager viewPager = findViewById(R.id.aspire_viewpager);
+        AspireViewPageAdapter aspireViewPageAdapter = new AspireViewPageAdapter(AspireGallery.this, urlList,desc);
+        viewPager.setAdapter(aspireViewPageAdapter);
     }
 
     @Override

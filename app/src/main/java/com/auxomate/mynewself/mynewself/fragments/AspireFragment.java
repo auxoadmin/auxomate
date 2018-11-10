@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -40,7 +41,7 @@ import com.auxomate.mynewself.mynewself.activities.HomeActivity;
 import com.auxomate.mynewself.mynewself.models.AspireRecycler;
 import com.auxomate.mynewself.mynewself.R;
 import com.auxomate.mynewself.mynewself.activities.AddPostAspire;
-import com.auxomate.mynewself.mynewself.models.AudioModel;
+
 import com.auxomate.mynewself.mynewself.utilities.PrefManager;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.Continuation;
@@ -78,7 +79,7 @@ public class AspireFragment extends Fragment  {
 
     private static final int MAX_DIMENSION = 1200;
     Uri uploadUri;
-    Context applicationContext = HomeActivity.getContextOfApplication();
+    public Context applicationContext = HomeActivity.getContextOfApplication();
     FirebaseRecyclerAdapter<AspireRecycler,AspireViewHolder> firebaseRecyclerAdapter;
     private Paint p = new Paint();
 
@@ -108,16 +109,16 @@ public class AspireFragment extends Fragment  {
 
 
 
-//                viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        Intent intent = new Intent(getActivity(),AspireGallery.class);
-////                        intent.putExtra("imageUrl",model.getImage());
-////                        intent.putExtra("title",model.getTitle());
-////                        intent.putExtra("desc",model.getDescription());
-//                        startActivity(intent);
-//                    }
-//                });
+                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getActivity(),AspireGallery.class);
+//                        intent.putExtra("imageUrl",model.getImage());
+//                        intent.putExtra("title",model.getTitle());
+//                        intent.putExtra("desc",model.getDescription());
+                        startActivity(intent);
+                    }
+                });
 
             }
         };
@@ -131,25 +132,29 @@ public class AspireFragment extends Fragment  {
 
     public static class AspireViewHolder extends RecyclerView.ViewHolder{
         View mView;
-        ImageButton imageView;
+        ImageView imageView;
         Layout layout;
         public static ArrayList<String> imageUrl = new ArrayList<String>();
 
         public AspireViewHolder(View itemView) {
             super(itemView);
-            mView = itemView;
+            this.mView = itemView;
+
+
+
 
 
         }
 
         public void setDes(String description){
+            imageView = mView.findViewById(R.id.aspire_recycler_image);
             TextView post_des= mView.findViewById(R.id.aspire_recycler_des);
 
             post_des.setText(description);
         }
         public void setImage(Context ctx, String image){
 
-            ImageView imageView = mView.findViewById(R.id.aspire_recycler_image);
+
 
 
            // Picasso.with(ctx).load(image).resize(150,150).into(imageView);
@@ -259,19 +264,42 @@ public class AspireFragment extends Fragment  {
 
 
 
-                if (direction == ItemTouchHelper.LEFT) {
+                if (direction == ItemTouchHelper.LEFT)  {
                     firebaseRecyclerAdapter.getRef(position).removeValue();
                     firebaseRecyclerAdapter.notifyItemRemoved(position);
                     mRecycler.invalidate();
-                    Toast.makeText(getActivity(), "delete", Toast.LENGTH_SHORT).show();
-
+                   // Toast.makeText(getActivity(), "delete", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(viewHolder.itemView,"Deleted",Snackbar.LENGTH_SHORT).show();
 
 
                     // adapter.removeItem(position);
 
-                } else {
-
                 }
+// else {
+//
+////                    LayoutInflater li = LayoutInflater.from(getActivity());
+////                    View cv = li.inflate(R.layout.edit_aspire_recyclerdata, null);
+////                    final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+////                    builder.setView(cv);
+////                    final AlertDialog show = builder.show();
+////
+////                    final EditText editText = (EditText) cv.findViewById(R.id.aspiredialog_edt);
+////                    cv.findViewById(R.id.aspiredialog_btn_save).setOnClickListener(new View.OnClickListener() {
+////                        @Override
+////                        public void onClick(View v) {
+////                            AspireRecycler aspireRecycler = new AspireRecycler();
+////                            final String s = editText.getText().toString();
+////                            aspireRecycler.setDescription(s);
+////
+////                            firebaseRecyclerAdapter.getRef(position).setValue(aspireRecycler);
+////                            firebaseRecyclerAdapter.notifyItemChanged(position);
+////                            mRecycler.invalidate();
+////
+////
+////                        }
+////                    });
+//
+//                }
             }
 
             @Override
@@ -294,14 +322,14 @@ public class AspireFragment extends Fragment  {
                         RectF icon_dest = new RectF((float) itemView.getRight() - 2 * width, (float) itemView.getTop() + width, (float) itemView.getRight() - width, (float) itemView.getBottom() - width);
                         c.drawBitmap(icon, null, icon_dest, p);
                     }
-//                    else {
+                    else {
 //                        p.setColor(Color.parseColor("#388E3C"));
 //                        RectF background = new RectF((float) itemView.getLeft(), (float) itemView.getTop(), dX, (float) itemView.getBottom());
 //                        c.drawRect(background, p);
 //                        icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_edit_white);
 //                        RectF icon_dest = new RectF((float) itemView.getLeft() + width, (float) itemView.getTop() + width, (float) itemView.getLeft() + 2 * width, (float) itemView.getBottom() - width);
 //                        c.drawBitmap(icon, null, icon_dest, p);
-//                    }
+                    }
                 }
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
             }

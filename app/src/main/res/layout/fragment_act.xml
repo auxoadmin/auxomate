@@ -385,6 +385,12 @@
                     android:clickable="true"/>
 
             </LinearLayout>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/actFragment_button_submit"
+                android:text="Done"
+                />
 
 
         </LinearLayout>
