@@ -28,13 +28,14 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.WelcomeNameActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+             />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
             android:name=".activities.HomeActivity"
-            android:label="@string/title_activity_home" />
+            android:label="@string/title_activity_home"
+            android:screenOrientation="portrait"/>
         <activity android:name=".activities.AddPostAspire" />
         <activity android:name=".activities.AspireGallery" />
         <activity
@@ -91,6 +92,19 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
+
+        <activity
+            android:name=".dashboard.MenuPage"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.MenuListActivity.NoActionBar">
+        </activity>
+
+        <activity
+            android:name=".dashboard.MenuScroll"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.ScrollableMenuActivity.NoActionBar">
+        </activity>
+
     </application>
 
 </manifest>

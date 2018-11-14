@@ -61,9 +61,9 @@ public class UserNameFragment extends Fragment {
 
         editTextName = view.findViewById(R.id.username_edittext_username);
         buttonSubmit = view.findViewById(R.id.usename_button_submit);
-        buttonSubmit.setVisibility(View.GONE);
+       // buttonSubmit.setVisibility(View.GONE);
 
-        ((WelcomeNameActivity)getActivity()).buttonNext.setOnClickListener(new View.OnClickListener() {
+        buttonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String name = editTextName.getText().toString().trim();
@@ -73,34 +73,9 @@ public class UserNameFragment extends Fragment {
 
 
                 }else {
+                    isUserCreated(name);
 
-                    ProgressDialog progressDialog = new ProgressDialog(getActivity());
-                    progressDialog.setCancelable(false);
-                    progressDialog.setMessage("Loading...");
-                    progressDialog.show();
-                    PrefManager.putString(getActivity(),PrefManager.PRF_USERNAME_WELCOME,name);
-                    String key = databaseReference.child("users").push().getKey();
 
-                    databaseReference.child("users").child(key).child("user_name").setValue(name).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-
-                            if (task.isSuccessful()) {
-                                progressDialog.dismiss();
-                                PrefManager.putString(getActivity(),PrefManager.PRF_USERKEY,key);
-
-                                PrefManager.putBoolean(getActivity(),PrefManager.PRF_WELCOME_BOARDS,true);
-                                // Toast.makeText(getActivity(), "User created!", Toast.LENGTH_LONG).show();
-                                ((WelcomeNameActivity)getActivity()).viewPagerFrags.setCurrentItem(((WelcomeNameActivity)getActivity()).viewPagerFrags.getCurrentItem()+1, true);
-
-                            } else {
-                                progressDialog.dismiss();
-                                Log.e("User_ADD", Objects.requireNonNull(task.getException()).getMessage());
-                                Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_LONG).show();
-
-                            }
-                        }
-                    });
 
 
 
@@ -114,8 +89,38 @@ public class UserNameFragment extends Fragment {
 
     }
 
+    private boolean isUserCreated(String name) {
+        ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+        PrefManager.putString(getActivity(),PrefManager.PRF_USERNAME_WELCOME,name);
+        String key = databaseReference.child("users").push().getKey();
 
+        databaseReference.child("users").child(key).child("user_name").setValue(name).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
 
+                if (task.isSuccessful()) {
+                    progressDialog.dismiss();
+                    PrefManager.putString(getActivity(),PrefManager.PRF_USERKEY,key);
+
+                    PrefManager.putBoolean(getActivity(),PrefManager.PRF_WELCOME_BOARDS,true);
+                    // Toast.makeText(getActivity(), "User created!", Toast.LENGTH_LONG).show();
+                    ((WelcomeNameActivity)getActivity()).viewPagerFrags.setCurrentItem(((WelcomeNameActivity)getActivity()).viewPagerFrags.getCurrentItem()+1, true);
+                    isDone = true;
+
+                } else {
+                    progressDialog.dismiss();
+                    Log.e("User_ADD", Objects.requireNonNull(task.getException()).getMessage());
+                    Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_LONG).show();
+                    isDone = false;
+
+                }
+            }
+        });
+        return  isDone;
+    }
 
 
 }

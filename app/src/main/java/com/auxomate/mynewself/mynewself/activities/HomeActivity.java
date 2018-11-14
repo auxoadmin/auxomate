@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
 import android.support.v4.app.FragmentTransaction;
@@ -24,6 +25,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.auxomate.mynewself.mynewself.dashboard.Dashboard;
 import com.auxomate.mynewself.mynewself.utilities.ClearPrefReceiver;
 import com.auxomate.mynewself.mynewself.utilities.PrefManager;
 import com.auxomate.mynewself.mynewself.R;
@@ -41,10 +43,11 @@ import java.util.Calendar;
 
 
 
-public class HomeActivity extends AppCompatActivity  {
+public class HomeActivity extends FragmentActivity {
 
-    AspireFragment aspireFragment;
-    ActFragment actFragment;
+    AspireFragment aspireFragment = new AspireFragment();
+    ActFragment actFragment = new ActFragment();
+    AwareFragment awareFragment = new AwareFragment();
     Button aware,aspire,act;
     ArrayList<String> menuList = new ArrayList<>();     //menu titles
     ArrayList<Integer> imagesList = new ArrayList<>();      //menu backgrounds
@@ -68,41 +71,41 @@ public class HomeActivity extends AppCompatActivity  {
 
 
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            FragmentManager fragmentManager= getSupportFragmentManager();
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            switch (item.getItemId()) {
-                case R.id.navigation_aware:
-                    transaction.replace(R.id.container,new AwareFragment()).commit();
-
-                   toolbar.setTitle("Aware");
-                    return true;
-                case R.id.navigation_aspire:
-
-                    transaction.replace(R.id.container,new AspireFragment()).commit();
-
-                    toolbar.setTitle("Aspire");
-                    return true;
-                case R.id.navigation_act:
-                    transaction.replace(R.id.container,actFragment).commit();
-
-                    toolbar.setTitle("Act");
-                    return true;
-                case R.id.navigation_userprofile:
-                    transaction.replace(R.id.container,new UserprofileFragment()).commit();
-                    item.setTitle(PrefManager.getString(HomeActivity.this,PrefManager.PRF_USERNAME_WELCOME));
-
-
-                    toolbar.setTitle("User Profile");
-                    return true;
-            }
-            return false;
-        }
-    };
+//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+//            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+//
+//        @Override
+//        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//            FragmentManager fragmentManager= getSupportFragmentManager();
+//            FragmentTransaction transaction = fragmentManager.beginTransaction();
+//            switch (item.getItemId()) {
+//                case R.id.navigation_aware:
+//                    transaction.replace(R.id.container,new AwareFragment()).commit();
+//
+//                  // toolbar.setTitle("Aware");
+//                    return true;
+//                case R.id.navigation_aspire:
+//
+//                    transaction.replace(R.id.container,new AspireFragment()).commit();
+//
+//                   // toolbar.setTitle("Aspire");
+//                    return true;
+//                case R.id.navigation_act:
+//                    transaction.replace(R.id.container,actFragment).commit();
+//
+//                  //  toolbar.setTitle("Act");
+//                    return true;
+//                case R.id.navigation_userprofile:
+//                    transaction.replace(R.id.container,new UserprofileFragment()).commit();
+//                    item.setTitle(PrefManager.getString(HomeActivity.this,PrefManager.PRF_USERNAME_WELCOME));
+//
+//
+//                 //   toolbar.setTitle("User Profile");
+//                    return true;
+//            }
+//            return false;
+//        }
+//    };
 
 
 
@@ -114,56 +117,56 @@ public class HomeActivity extends AppCompatActivity  {
 
 
 
-//        menuList.add("Aware");       //add titles
-//        menuList.add("Aspire");
-//        menuList.add("Act");
-//        menuList.add("User");
+        menuList.add("Aware");       //add titles
+        menuList.add("Aspire");
+        menuList.add("Act");
+        menuList.add(PrefManager.getString(this,PrefManager.PRF_USERNAME_WELCOME));
+
+//        aware = findViewById(R.id.home_AwareFrag);
+//        aware.setOnClickListener(this);
+//        aspire=findViewById(R.id.home_AspireFrag);
+//        aspire.setOnClickListener(this);
+//        act=findViewById(R.id.home_ActFrag);
+//        act.setOnClickListener(this);
+        imagesList.add(R.drawable.aware_144dp);        //add background images
+        imagesList.add(R.drawable.aspire_144dp);
+        imagesList.add(R.drawable.act_144dp);
+        imagesList.add(R.drawable.user_24dp);
+
+        fragmentsList.add(AwareFragment.newInstance("aware"));      //add fragment instances
+        fragmentsList.add(aspireFragment);
+        fragmentsList.add(actFragment);
+        fragmentsList.add(UserprofileFragment.newInstance("User Profile"));
+        //toolbar = findViewById(R.id.toolbar);
 //
-////        aware = findViewById(R.id.home_AwareFrag);
-////        aware.setOnClickListener(this);
-////        aspire=findViewById(R.id.home_AspireFrag);
-////        aspire.setOnClickListener(this);
-////        act=findViewById(R.id.home_ActFrag);
-////        act.setOnClickListener(this);
-//        imagesList.add(R.drawable.aware_144dp);        //add background images
-//        imagesList.add(R.drawable.aspire_144dp);
-//        imagesList.add(R.drawable.act_144dp);
-//        imagesList.add(R.drawable.user_24dp);
-//
-//        fragmentsList.add(AwareFragment.newInstance("Aware"));      //add fragment instances
-//        fragmentsList.add(AspireFragment.newInstance("Aspire"));
-//        fragmentsList.add(ActFragment.newInstance("Act"));
-//        fragmentsList.add(UserprofileFragment.newInstance("User Profile"));
-//        //toolbar = findViewById(R.id.toolbar);
-//
-//        auxomate auxomate =  com.auxomate.mynewself.mynewself.utilities.auxomate.initialize(HomeActivity.this, menuList, imagesList, fragmentsList);
-//        auxomate.start();
+        Dashboard auxomate =  Dashboard.initialize(HomeActivity.this, menuList, imagesList, fragmentsList);
+        auxomate.start();
 
 
         contextOfApplication = getApplicationContext();
 
 
 
-        toolbar = getSupportActionBar();
+       // toolbar = getSupportActionBar();
 
 
 
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-
-
-        aspireFragment = new AspireFragment();
-        actFragment = new ActFragment();
-
-
-
-        //navigation.setOnNavigationItemSelectedListener();
-        navigation.setSelectedItemId(R.id.navigation_act);
-
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-        transaction.replace(R.id.container,actFragment).commit();
-        toolbar.setTitle("Act");
+//        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+//
+//
+//        aspireFragment = new AspireFragment();
+//        actFragment = new ActFragment();
+//
+//
+//
+//        //navigation.setOnNavigationItemSelectedListener();
+//        navigation.setSelectedItemId(R.id.navigation_act);
+//
+//        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+//
+//        transaction.replace(R.id.container,actFragment).commit();
+//        toolbar.setTitle("Act");
 
 
 

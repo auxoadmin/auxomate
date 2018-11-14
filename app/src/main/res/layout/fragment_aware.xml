@@ -6,9 +6,9 @@
     android:layout_height="match_parent"
     android:background="#b0b1b2"
     tools:context=".fragments.AwareFragment"
-    >
+    android:layout_marginBottom="56dp">
 
-    <ImageView
+    <ImageButton
         android:id="@+id/record_imge"
         android:layout_width="120dp"
         android:layout_height="120dp"
@@ -16,10 +16,23 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:scaleType="fitStart"
+        android:background="@color/colorTransparent"
         android:src="@drawable/microphone"
+        android:layout_centerVertical="true"
+
         />
 
-    <RelativeLayout
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Record Your New Belief"
+        android:layout_gravity="center"
+        android:id="@+id/textview_aware"/>
+</LinearLayout>
+    <!-- RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
@@ -54,17 +67,14 @@
             android:layout_toEndOf="@+id/recordBtn"
             android:background="@drawable/stop_img"
              />
-    </RelativeLayout>
+    </RelativeLayout-->
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/aware_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="200dp"
-            android:layout_marginBottom="56dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/aware_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/record_imge" />
 
 
 

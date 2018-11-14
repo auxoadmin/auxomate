@@ -57,6 +57,10 @@ public class PrefManager {
     public static final String TASK2_DES = "task2_des";
     public static final String TASK3_DES = "task3_des";
 
+    public static SharedPreferences pref;
+    public static SharedPreferences.Editor editor;
+
+
 
 
     public PrefManager(Context context)
@@ -243,8 +247,7 @@ public class PrefManager {
 
 
     public static void setFirstTimeLaunch(Context context,boolean isFirstTime) {
-        SharedPreferences pref;
-        SharedPreferences.Editor editor;
+
         pref = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
         editor.putBoolean(IS_FIRST_TIME_LAUNCH, isFirstTime);
@@ -259,8 +262,7 @@ public class PrefManager {
 
     public static void putString(Context context, String key, String value){
 
-        SharedPreferences pref;
-        SharedPreferences.Editor editor;
+
         pref = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
         editor.putString(key,value);
@@ -271,7 +273,7 @@ public class PrefManager {
 
     public static String getString(Context context, String key){
 
-        SharedPreferences pref;
+
         pref = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         return pref.getString(key,"");
 
@@ -279,8 +281,6 @@ public class PrefManager {
 
     public static void putInt(Context context, String key, int value){
 
-        SharedPreferences pref;
-        SharedPreferences.Editor editor;
         pref = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
         editor.putInt(key,value);
@@ -291,7 +291,7 @@ public class PrefManager {
 
     public static int getInt(Context context, String key){
 
-        SharedPreferences pref;
+
         pref = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         return pref.getInt(key,0);
 
@@ -299,8 +299,7 @@ public class PrefManager {
 
     public static void putBoolean(Context context, String key, boolean value){
 
-        SharedPreferences pref;
-        SharedPreferences.Editor editor;
+
         pref = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
         editor.putBoolean(key,value);
@@ -311,10 +310,17 @@ public class PrefManager {
 
     public static boolean getBoolean(Context context, String key){
 
-        SharedPreferences pref;
         pref = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         return pref.getBoolean(key,false);
 
+    }
+
+    public  static  void  resetPref(Context context)
+    {
+
+        pref = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
+        editor = pref.edit();
+        editor.clear();
     }
 
 

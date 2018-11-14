@@ -1,6 +1,7 @@
 package com.auxomate.mynewself.mynewself.activities;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -10,10 +11,12 @@ import android.app.TimePickerDialog;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
@@ -101,91 +104,123 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
 
     private void getIncomingIntent(){
 
-        if(getIntent().hasExtra("visionResult")){
+        if(getIntent().hasExtra("visionResult")) {
 
             String[] split = result.split("(\\s|^)Primary Task(\\s|$)");
-            String  stringTask1 = split[1].toString();
-            String[] splitTask = stringTask1.split("(\\s|^)Secondary Tasks[\\r\\n]Task 2(\\s|$)|(\\s|^)SecondaryTasks[\\r\\n]Task2(\\s|$)");
-            String[] splitTask1 = splitTask[0].split("(\\s|^)Task 1(\\s|$)|(\\s|^)Task1(\\s|$)|(\\s|^)Taski(\\s|$)|(\\s|^)Task i(\\s|$)|(\\s|^)Taskı(\\s|$)|(\\s|^)Task(\\s|$)");
+            if (2 <= split.length) {
+                String dailyQuote = split[0].toString();
+                String stringTask1 = split[1].toString();
+                String[] splitTask = stringTask1.split("(\\s|^)Secondary Tasks[\\r\\n]Task 2(\\s|$)|(\\s|^)SecondaryTasks[\\r\\n]Task2(\\s|$)");
+                String[] splitTask1 = splitTask[0].split("(\\s|^)Task 1(\\s|$)|(\\s|^)Task1(\\s|$)|(\\s|^)Taski(\\s|$)|(\\s|^)Task i(\\s|$)|(\\s|^)Taskı(\\s|$)|(\\s|^)Task(\\s|$)");
+                if ( 2 <= splitTask1.length) {
+                    editTextPTOne.setText(splitTask1[1]);
 
-            String[] splitTask2 = splitTask[1].split("(\\s|^)Task 3(\\s|$)|(\\s|^)Task3(\\s|$)");
+                if (2 <= splitTask.length) {
+                String[] splitTask2 = splitTask[1].split("(\\s|^)Task 3(\\s|$)|(\\s|^)Task3(\\s|$)");
+                if(2<=splitTask2.length) {
+                    editTextSTTwo.setText(splitTask2[0]);
+                    String[] splitTask3 = splitTask2[1].split("(\\s|^)Schedule(\\s|$)");
+                    if (2 <= splitTask3.length) {
+                        editTextSTThree.setText(splitTask3[0]);
 
-            String[] splitTask3 = splitTask2[1].split("(\\s|^)Schedule(\\s|$)");
 
+
+                        }
+                    else {
+                        showDialog(this,"oops","Something went wrong!!");
+                    }
+                    }
+                else {
+                    showDialog(this,"oops","Something went wrong!!");
+                }
+                }
+                else {
+                    showDialog(this,"oops","Something went wrong!!");
+                }
+            }
+                else {
+                    showDialog(this,"oops","Something went wrong!!");
+                }
+        }
+            else {
+                showDialog(this,"oops","Something went wrong!!");
+            }
 
             String[] splitSchedule = result.split("(\\s|^)Schedule Tasks(\\s|$)");
 
-
-            String[] splitVisual = splitSchedule[1].split("(\\s|^)Schedule Visualizations(\\s|$)");
-            Log.d("taskTime",splitVisual[0]);
-            Log.d("VisulizationTime",splitVisual[1]);
-
-
+            if(2<=splitSchedule.length) {
+                String[] splitVisual = splitSchedule[1].split("(\\s|^)Schedule Visualizations(\\s|$)");
+                Log.d("taskTime", splitVisual[0]);
+                Log.d("VisulizationTime", splitVisual[1]);
 
 
+                String[] splitvTask3 = splitVisual[0].split("(\\s|^)Task 3(\\s|$)|(\\s|^)Task3(\\s|$)");
+                String[] splitvTask2 = splitvTask3[0].split("(\\s|^)Task2(\\s|$)|(\\s|^)Task 2(\\s|$)");
+                String[] vtask = splitvTask2[0].split("(\\s|^)Task 1(\\s|$)|(\\s|^)Task1(\\s|$)|(\\s|^)Taski(\\s|$)|(\\s|^)Task i(\\s|$)|(\\s|^)Taskı(\\s|$)");
 
-            String[] splitvTask3 = splitVisual[0].split("(\\s|^)Task 3(\\s|$)|(\\s|^)Task3(\\s|$)");
-            String[] splitvTask2 = splitvTask3[0].split("(\\s|^)Task2(\\s|$)|(\\s|^)Task 2(\\s|$)");
-            String [] vtask = splitvTask2[0].split("(\\s|^)Task 1(\\s|$)|(\\s|^)Task1(\\s|$)|(\\s|^)Taski(\\s|$)|(\\s|^)Task i(\\s|$)|(\\s|^)Taskı(\\s|$)");
-            String  schttask1 = vtask[1].split("AM|PM")[0];
-            String  schttask2 = splitvTask2[1].split("AM|PM")[0];
-            String  schttask3 = splitvTask3[1].split("AM|PM")[0];
+                if(2<=vtask.length) {
+                    String schttask1 = vtask[1].split("/")[0];
+                    String[] taskOneTime=schttask1.split(":");
+                    NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(taskOneTime[0]), Integer.parseInt(taskOneTime[1]),1);
+                    editTextSchTOneTime.setText(schttask1);
+                    if (2 <= splitvTask2.length) {
+                        String schttask2 = splitvTask2[1].split("/")[0];
+                        String[] taskTwoTime=schttask2.split(":");
+                        editTextSchTTwoTime.setText(schttask2);
+                        NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(taskTwoTime[0]), Integer.parseInt(taskTwoTime[1]),2);
+                        if (2 <= splitvTask3.length) {
+                            String schttask3 = splitvTask3[1].split("/")[0];
+                            String[] taskThreeTime=schttask3.split(":");
+                            Log.d("taskthreehour",taskThreeTime[0]);
+                            Log.d("taskthreemin",taskThreeTime[1]);
+                            NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(taskThreeTime[0]), Integer.parseInt(taskThreeTime[1]),3);
+                            editTextSchTThreeTime.setText(schttask3);
 
 
-         String[] visualTime3 = splitVisual[1].split("(\\s|^)v 3(\\s|$)|(\\s|^)v3(\\s|$)|(\\s|^)V3(\\s|$)|(\\s|^)03(\\s|$)");
-         String[] visualTime2 = visualTime3[0].split("(\\s|^)v 2(\\s|$)|(\\s|^)v2(\\s|$)|(\\s|^)V2(\\s|$)");
-         String [] visualTime1 = visualTime2[0].split("(\\s|^)v 1(\\s|$)|(\\s|^)v1(\\s|$)|(\\s|^)V1(\\s|$)|(\\s|^)vi(\\s|$)");
+                            String[] visualTime3 = splitVisual[1].split("(\\s|^)v 3(\\s|$)|(\\s|^)v3(\\s|$)|(\\s|^)V3(\\s|$)|(\\s|^)03(\\s|$)");
+                            String[] visualTime2 = visualTime3[0].split("(\\s|^)v 2(\\s|$)|(\\s|^)v2(\\s|$)|(\\s|^)V2(\\s|$)");
+                            String[] visualTime1 = visualTime2[0].split("(\\s|^)v 1(\\s|$)|(\\s|^)v1(\\s|$)|(\\s|^)V1(\\s|$)|(\\s|^)vi(\\s|$)");
 
-           if(splitTask1[1]!= null && 2<=splitTask1.length) {
-               editTextPTOne.setText(splitTask1[1]);
-           }else {
-               editTextPTOne.setText("Edit manually or try again");
-           }
-            if(splitTask2[0]!= null&& 2<=splitTask2.length) {
-                editTextSTTwo.setText(splitTask2[0]);
-            }else {
-                editTextSTTwo.setText("Edit manually or try again");
-            }
-            if(splitTask3[0]!= null&& 2<=splitTask3.length) {
-                editTextSTThree.setText(splitTask3[0]);
-            }else {
-                editTextSTThree.setText("Edit manually or try again");
-            }
-            if(schttask1!= null&& 2<=vtask.length) {
-                editTextSchTOneTime.setText(schttask1);
-            }else {
-                editTextSchTOneTime.setText("Edit manually or try again");
-            }
+                            if ( 2 <= visualTime1.length) {
+                                editTextSchVOneTime.setText(visualTime1[1]);
+                                String[] vOneTime = visualTime1[1].split(":");
+                                NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(vOneTime[0]), Integer.parseInt(vOneTime[1]),4);
 
-            if(schttask2!= null&& 2<=splitvTask2.length) {
-                editTextSchTTwoTime.setText(schttask2);
-            }else {
-                editTextSchTTwoTime.setText("Edit manually or try again");
-            }
-            if(schttask3!= null&& 2<=splitvTask3.length) {
-                editTextSchTThreeTime.setText(schttask3);
-            }else {
-                editTextSchTThreeTime.setText("Edit manually or try again");
-            }
-            if(visualTime1[1]!= null&& 2<=visualTime1.length) {
-                editTextSchVOneTime.setText(visualTime1[1]);
-            }else {
-                editTextSchVOneTime.setText("Edit manually or try again");
-            }
-            if( 2<=visualTime2.length) {
-                editTextSchVTwoTime.setText(visualTime2[1]);
-            }else {
-                editTextSchVTwoTime.setText("Edit manually or try again");
-            }
-            if( 2<=visualTime3.length) {
-                editTextSchVThreeTime.setText(visualTime3[1]);
-            }else {
-                editTextSchVThreeTime.setText("Edit manually or try again");
+                                if (2 <= visualTime2.length) {
+                                    editTextSchVTwoTime.setText(visualTime2[1]);
+                                    String[] vTwoTime = visualTime2[1].split(":");
+                                    NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(vTwoTime[0]), Integer.parseInt(vTwoTime[1]),5);
+
+                                    if (2 <= visualTime3.length) {
+                                        editTextSchVThreeTime.setText(visualTime3[1]);
+                                        String[] vThreeTime = visualTime3[1].split(":");
+                                        NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(vThreeTime[0]), Integer.parseInt(vThreeTime[1]),6);
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
             }
 
         }
     }
+    public void showDialog(Activity activity, String title, CharSequence message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
+        if (title != null) builder.setTitle(title);
+
+        builder.setMessage(message);
+        builder.setPositiveButton("try again", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            startActivity(new Intent(getApplicationContext(),HomeActivity.class));
+            }
+        });
+        builder.setNegativeButton("edit menually", null);
+        builder.show();
+    }
     @Override
     public void onClick(View view) {
 
@@ -444,24 +479,24 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
 //
 //    }
 //
-//    public String getFormatedTime(int h, int m) {
-//        final String OLD_FORMAT = "HH:mm";
-//        final String NEW_FORMAT = "hh:mm a";
-//
-//        String oldDateString = h + ":" + m;
-//        String newDateString = "";
-//
-//        try {
-//            SimpleDateFormat sdf = new SimpleDateFormat(OLD_FORMAT, getCurrentLocale());
-//            Date d = sdf.parse(oldDateString);
-//            sdf.applyPattern(NEW_FORMAT);
-//            newDateString = sdf.format(d);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        return newDateString;
-//    }
+    public String getFormatedTime(int h, int m) {
+        final String OLD_FORMAT = "HH:mm";
+        final String NEW_FORMAT = "hh:mm a";
+
+        String oldDateString = h + ":" + m;
+        String newDateString = "";
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat(OLD_FORMAT, getCurrentLocale());
+            Date d = sdf.parse(oldDateString);
+            sdf.applyPattern(NEW_FORMAT);
+            newDateString = sdf.format(d);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return newDateString;
+    }
 
 
 //    private void scheduleNotification(Notification notification, int hour,int min,int reqCode) {

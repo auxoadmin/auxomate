@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -30,7 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WelcomeNameActivity extends AppCompatActivity implements View.OnClickListener {
+public class WelcomeNameActivity extends FragmentActivity implements View.OnClickListener {
 
     private TextInputLayout inputLayoutName;
     Button nameBtn;
@@ -79,14 +80,14 @@ public class WelcomeNameActivity extends AppCompatActivity implements View.OnCli
 
         buttonNext = findViewById(R.id.welcomename_button_next);
         buttonNext.setOnClickListener(this);
-        buttonNext.setVisibility(View.VISIBLE);
+        buttonNext.setVisibility(View.GONE);
 
         buttonSkip = findViewById(R.id.welcomename_button_skip);
         buttonSkip.setOnClickListener(this);
 
         viewPagerFrags = findViewById(R.id.welcomname_viewpager_frags);
         setupViewPager(viewPagerFrags);
-        viewPagerFrags.setOffscreenPageLimit(0);
+
 
         viewPagerFrags.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -99,7 +100,8 @@ public class WelcomeNameActivity extends AppCompatActivity implements View.OnCli
                 switch (position){
                     case 0:
                         buttonSkip.setVisibility(View.GONE);
-                        buttonNext.setVisibility(View.VISIBLE);
+                      //  buttonNext.setVisibility(View.VISIBLE);
+                        buttonNext.setVisibility(View.GONE);
                         break;
                     case 1:
                         buttonSkip.setVisibility(View.GONE);
@@ -108,7 +110,7 @@ public class WelcomeNameActivity extends AppCompatActivity implements View.OnCli
                         break;
                     case 2:
                         buttonSkip.setVisibility(View.VISIBLE);
-                        buttonNext.setText("SKIP");
+                        buttonNext.setText("Next");
                         buttonNext.setVisibility(View.VISIBLE);
                         break;
                     case 3:

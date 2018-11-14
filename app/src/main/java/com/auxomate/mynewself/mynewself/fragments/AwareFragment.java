@@ -126,7 +126,8 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
     private OnFragmentInteractionListener mListener;
 
     Button recordBtn,recordBtnStop,uploadBtn;
-    ImageView recordBtnPlay;
+    ImageButton recordBtnPlay, imageBtnPlay;
+    TextView tv;
 
     RecyclerView recyclerView;
     String mFileName = null;
@@ -265,12 +266,13 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Recordings").child(key);
 
 
-        recordBtn=RootView.findViewById(R.id.recordBtn);
-        recordBtn.setOnClickListener(this);
-        recordBtnPlay=RootView.findViewById(R.id.recordBtnPlay);
-        recordBtnPlay.setOnClickListener(this);
-        recordBtnStop=RootView.findViewById(R.id.recordBtnStop);
-        recordBtnStop.setOnClickListener(this);
+//        recordBtn=RootView.findViewById(R.id.recordBtn);
+//        recordBtn.setOnClickListener(this);
+//        recordBtnPlay=RootView.findViewById(R.id.recordBtnPlay);
+//        recordBtnPlay.setOnClickListener(this);
+//        recordBtnStop=RootView.findViewById(R.id.recordBtnStop);
+//        recordBtnStop.setOnClickListener(this);
+
 
         recyclerView =  RootView.findViewById(R.id.aware_recycler);
 
@@ -281,10 +283,14 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
 
 
 
+        imageBtnPlay = RootView.findViewById(R.id.record_imge);
+        imageBtnPlay.setOnClickListener(this);
+        tv= RootView.findViewById(R.id.textview_aware);
+        tv.setVisibility(View.GONE);
+//        imageBtnPlay.setEnabled(false);
 
-
-        recordBtnStop.setEnabled(false);
-        recordBtnPlay.setEnabled(false);
+//        recordBtnStop.setEnabled(false);
+//        recordBtnPlay.setEnabled(false);
 
 
         String namFile =  "Auxomate";
@@ -386,6 +392,8 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
                 mDatabase
         ) {
 
+
+
             public int position;
 
             public int getPosition() {
@@ -395,10 +403,28 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
             public void setPosition(int position) {
                 this.position = position;
             }
-            @Override
+
+
+             @Override
             protected void populateViewHolder(AwareViewHolder viewHolder, AudioModel model, int position) {
                 viewHolder.setName(model.getName());
                 viewHolder.setUrl(model.getUrl());
+                Log.d("AwareFrag",""+getItemCount());   
+                if(getItemCount()>=1){
+                    tv.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    Log.d("AwareFrag",""+getItemCount());
+                }
+                else {
+                    tv.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE    );
+                    Log.d("AwareFrag",""+getItemCount());  
+                }
+
+
+
+
+
 
                 viewHolder.textView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
@@ -535,7 +561,7 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId())
         {
-            case R.id.recordBtn:
+            case R.id.record_imge:
 
 
                 recordDialog = RecordDialog.newInstance("Record Audio");
@@ -557,25 +583,25 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
 
 
                 break;
-            case R.id.recordBtnPlay:
-
-                MediaPlayer mediaPlayer = new MediaPlayer();
-                try {
-                    mediaPlayer.setDataSource(mFileName);
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
-
-                } catch (Exception e) {
-
-                }
-                break;
-            case R.id.recordBtnStop:
-                stopRecording();
-                recordBtn.setEnabled(true);
-                recordBtnStop.setEnabled(false);
-                recordBtnPlay.setEnabled(true);
-               // uploadAudio();
-                break;
+//            case R.id.recordBtnPlay:
+////
+////                MediaPlayer mediaPlayer = new MediaPlayer();
+////                try {
+////                    mediaPlayer.setDataSource(mFileName);
+////                    mediaPlayer.prepare();
+////                    mediaPlayer.start();
+////
+////                } catch (Exception e) {
+////
+////                }
+////                break;
+////            case R.id.recordBtnStop:
+////                stopRecording();
+////                recordBtn.setEnabled(true);
+////                recordBtnStop.setEnabled(false);
+////                recordBtnPlay.setEnabled(true);
+////               // uploadAudio();
+////                break;
 
 
         }

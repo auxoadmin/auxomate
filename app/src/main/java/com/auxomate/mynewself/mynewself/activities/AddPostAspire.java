@@ -88,8 +88,7 @@ public class AddPostAspire extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.aspire_imgbutton_add:
-                CropImage.activity()
-                        .setCropShape(CropImageView.CropShape.RECTANGLE).start(this);
+                imagePicker();
                 break;
             case R.id.aspire_button_submit:
                 String name = post_des_edt.getText().toString().trim();
@@ -104,6 +103,11 @@ public class AddPostAspire extends AppCompatActivity implements View.OnClickList
                 }
                 break;
         }
+
+    }
+    public void imagePicker(){
+        CropImage.activity()
+                .setCropShape(CropImageView.CropShape.RECTANGLE).start(this);
 
     }
 
