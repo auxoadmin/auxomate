@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -27,6 +28,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,15 +46,22 @@ import android.widget.Toast;
 import com.auxomate.mynewself.mynewself.BuildConfig;
 import com.auxomate.mynewself.mynewself.activities.AddPostAspire;
 import com.auxomate.mynewself.mynewself.activities.AddTask;
+import com.auxomate.mynewself.mynewself.activities.HomeActivity;
 import com.auxomate.mynewself.mynewself.activities.Main2Activity;
 import com.auxomate.mynewself.mynewself.activities.MainActivity;
 import com.auxomate.mynewself.mynewself.activities.TaskSubmit;
+import com.auxomate.mynewself.mynewself.dashboard.MenuScroll;
 import com.auxomate.mynewself.mynewself.models.AspireRecycler;
 import com.auxomate.mynewself.mynewself.utilities.PackageManagerUtils;
 import com.auxomate.mynewself.mynewself.utilities.PrefManager;
 import com.auxomate.mynewself.mynewself.R;
 import com.auxomate.mynewself.mynewself.models.AudioModel;
 import com.auxomate.mynewself.mynewself.utilities.RecordDialog;
+
+import com.example.jean.jcplayer.JcPlayerManagerListener;
+import com.example.jean.jcplayer.general.JcStatus;
+import com.example.jean.jcplayer.model.JcAudio;
+import com.example.jean.jcplayer.view.JcPlayerView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -81,6 +90,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -102,6 +112,8 @@ import java.util.Random;
 
 import static android.app.Activity.RESULT_OK;
 import static android.os.FileObserver.DELETE;
+import static android.support.constraint.Constraints.TAG;
+
 
 
 /**
@@ -125,9 +137,8 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
 
     private OnFragmentInteractionListener mListener;
 
-    Button recordBtn,recordBtnStop,uploadBtn;
-    ImageButton recordBtnPlay, imageBtnPlay;
-    TextView tv;
+    ImageButton imageBtnPlay;
+
 
     RecyclerView recyclerView;
     String mFileName = null;
@@ -142,7 +153,7 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
     String key ;
     String keynode;
     AudioModel audioModel;
-    FirebaseRecyclerAdapter<AudioModel,AwareViewHolder> firebaseRecyclerAdapter;
+    private FirebaseRecyclerAdapter<AudioModel,AwareViewHolder> firebaseRecyclerAdapter;
 
     private static final String CLOUD_VISION_API_KEY = BuildConfig.API_KEY;
     public static final String FILE_NAME = "temp.jpg";
@@ -156,6 +167,13 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
     String wordCloudString = null;
     List<WordCloud> items;
     View RootView;
+    public static ArrayList<JcAudio> jcAudios = new ArrayList<>();
+
+
+    private SparseArray<Float> progressMap = new SparseArray<>();
+    AwareViewHolder viewHolder ;
+
+
 
 
 
@@ -259,7 +277,7 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
        // setHasOptionsMenu(true);
 
-        String key = PrefManager.getString(getActivity(),PrefManager.PRF_USERKEY);
+        String key = prefManager.getString(getActivity(),PrefManager.PRF_USERKEY);
         RootView = inflater.inflate(R.layout.fragment_aware, container, false);
         storageRef = FirebaseStorage.getInstance().getReference();
 
@@ -285,8 +303,13 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
 
         imageBtnPlay = RootView.findViewById(R.id.record_imge);
         imageBtnPlay.setOnClickListener(this);
-        tv= RootView.findViewById(R.id.textview_aware);
-        tv.setVisibility(View.GONE);
+
+
+//        HomeActivity.jcPlayerView.setVisibility(View.GONE);
+//        HomeActivity.jcPlayerView.setJcPlayerManagerListener(this);
+
+
+
 //        imageBtnPlay.setEnabled(false);
 
 //        recordBtnStop.setEnabled(false);
@@ -327,6 +350,7 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
                     firebaseRecyclerAdapter.getRef(position).removeValue();
                     firebaseRecyclerAdapter.notifyItemRemoved(position);
                     recyclerView.invalidate();
+                   // HomeActivity.jcPlayerView.removeAudio(HomeActivity.jcPlayerView.getMyPlaylist().get(position));
 
                     //Toast.makeText(getActivity(), "delete", Toast.LENGTH_SHORT).show();
                     Snackbar.make(viewHolder.itemView,"Deleted",Snackbar.LENGTH_SHORT).show();
@@ -382,6 +406,20 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        AwareViewHolder viewHolder;
+       // jcAudios.add(JcAudio.createFromURL(viewHolder.mView.,model.getUrl()));
+
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+    }
+
+
+    @Override
     public void onStart() {
         super.onStart();
 
@@ -405,21 +443,35 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
             }
 
 
+
+
+
+
              @Override
             protected void populateViewHolder(AwareViewHolder viewHolder, AudioModel model, int position) {
                 viewHolder.setName(model.getName());
-                viewHolder.setUrl(model.getUrl());
-                Log.d("AwareFrag",""+getItemCount());   
-                if(getItemCount()>=1){
-                    tv.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-                    Log.d("AwareFrag",""+getItemCount());
-                }
-                else {
-                    tv.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.GONE    );
-                    Log.d("AwareFrag",""+getItemCount());  
-                }
+
+                Log.d("AwareFrag",""+getItemCount());
+                 jcAudios.add(JcAudio.createFromURL(model.getName(),model.getUrl()));
+
+
+
+
+                viewHolder.textView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MenuScroll.jcPlayerView.setVisibility(View.VISIBLE);
+
+                        MenuScroll.playAudio(jcAudios,position);
+
+
+
+
+
+
+
+                    }
+                });
 
 
 
@@ -457,9 +509,12 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
 
 
 
+
     public static class AwareViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         View mView;
         TextView textView;
+
+
 
         public AwareViewHolder(View itemView) {
             super(itemView);
@@ -469,6 +524,8 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
 
         }
 
+
+
         public void setName(String name) {
             textView = mView.findViewById(R.id.aware_recycler_tv);
             textView.setText(name);
@@ -477,26 +534,10 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
 
         public void setUrl(final String url) {
 
-            ImageButton imageButton = mView.findViewById(R.id.aware_recycler_btn);
-            imageButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    MediaPlayer mediaPlayer = new MediaPlayer();
-                    try {
-                        mediaPlayer.setDataSource(url);
-                        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                            @Override
-                            public void onPrepared(MediaPlayer mediaPlayer) {
-                                mediaPlayer.start();
-                            }
-                        });
-                        mediaPlayer.prepare();
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
+
+
+
 
         }
 
@@ -567,6 +608,7 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
                 recordDialog = RecordDialog.newInstance("Record Audio");
                 recordDialog.setMessage("Press for record");
                 recordDialog.show(getActivity().getFragmentManager(),"TAG");
+
                 recordDialog.setPositiveButton("Save", new RecordDialog.ClickListener() {
                     @Override
                     public void OnClickListener(String path) {
@@ -664,41 +706,6 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
         });
 
 
-    }
-
-    private void startRecording() {
-
-//        if(PermissionUtils.requestPermission(getActivity(), AUDIO_PERMISSIONS_REQUEST,
-//              android.Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.RECORD_AUDIO)) {
-//            Log.d("permission","granted");
-//
-//        }
-            mRecorder = new MediaRecorder();
-            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            mRecorder.setOutputFile(mFileName);
-            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-
-            try {
-
-                mRecorder.prepare();
-                Toast.makeText(getActivity(), "Recording Started", Toast.LENGTH_SHORT).show();
-            } catch (IOException e) {
-                Log.e("Recording log", "prepare() failed");
-            }
-
-
-
-
-        mRecorder.start();
-
-
-    }
-
-    private void stopRecording() {
-        mRecorder.stop();
-        mRecorder.release();
-        mRecorder = null;
     }
 
     public static AwareFragment newInstance(String title) {
@@ -955,7 +962,11 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-
+    @Override
+    public void onStop() {
+        super.onStop();
+      //  HomeActivity.jcPlayerView.createNotification();
+    }
 
     private static String convertResponseToString(Context ctx, BatchAnnotateImagesResponse response) {
         StringBuilder message = new StringBuilder("");
@@ -1005,6 +1016,45 @@ public class AwareFragment extends Fragment implements View.OnClickListener {
         }
         return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
     }
+
+
+
+    public void updateProgress(final JcStatus jcStatus) {
+        Log.d(TAG, "Song duration = " + jcStatus.getDuration()
+                + "\n song position = " + jcStatus.getCurrentPosition());
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // calculate progress
+                float progress = (float) (jcStatus.getDuration() - jcStatus.getCurrentPosition())
+                        / (float) jcStatus.getDuration();
+                progress = 1.0f - progress;
+
+                    int position = jcAudios.indexOf(jcStatus.getJcAudio());
+                    Log.d(TAG, "Progress = " + progress);
+
+
+
+
+                    progressMap.put(position, progress);
+                    if (progressMap.size() > 1) {
+                        for (int i = 0; i < progressMap.size(); i++) {
+                            if (progressMap.keyAt(i) != position) {
+                                Log.d(TAG, "KeyAt(" + i + ") = " + progressMap.keyAt(i));
+                                firebaseRecyclerAdapter.notifyItemChanged(progressMap.keyAt(i));
+                                progressMap.delete(progressMap.keyAt(i));
+                            }
+                        }
+                    }
+                   firebaseRecyclerAdapter.notifyItemChanged(position);
+                }
+
+        });
+    }
+
+
+
 
 
 

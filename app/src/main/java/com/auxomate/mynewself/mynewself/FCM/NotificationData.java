@@ -1,9 +1,11 @@
 package com.auxomate.mynewself.mynewself.FCM;
 
+import android.graphics.Bitmap;
+
 public class NotificationData {
     public static final String TEXT = "TEXT";
 
-    private String imageName;
+    private Bitmap imageName;
     private int id; // identificador da notificação
     private String title;
     private String textMessage;
@@ -11,7 +13,7 @@ public class NotificationData {
 
     public NotificationData() {}
 
-    public NotificationData(String imageName, int id, String title, String textMessage, String sound) {
+    public NotificationData(Bitmap imageName, int id, String title, String textMessage, String sound) {
         this.imageName = imageName;
         this.id = id;
         this.title = title;
@@ -19,11 +21,11 @@ public class NotificationData {
         this.sound = sound;
     }
 
-    public String getImageName() {
+    public Bitmap getImageName() {
         return imageName;
     }
 
-    public void setImageName(String imageName) {
+    public void setImageName(Bitmap imageName) {
         this.imageName = imageName;
     }
 

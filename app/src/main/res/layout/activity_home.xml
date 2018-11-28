@@ -18,6 +18,8 @@
 
    </android.support.v7.widget.Toolbar>
     </android.support.design.widget.CoordinatorLayout>
+
+
     <!--LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,7 +43,7 @@
 
     </LinearLayout-->
 
-    <android.support.design.widget.BottomNavigationView
+    <!--android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,7 +51,8 @@
         android:layout_marginStart="0dp"
         android:background="?android:attr/windowBackground"
         android:layout_alignParentBottom="true"
-        app:menu="@menu/navigation" />
+        app:menu="@menu/navigation" /-->
+
 
 
 </RelativeLayout>

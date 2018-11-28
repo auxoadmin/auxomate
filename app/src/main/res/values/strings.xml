@@ -42,4 +42,6 @@
     <string name="image_picker_error">Something is wrong with that image. Pick a different one please.</string>
     <string name="default_notification_channel_id">Id</string>
     <string name="fcm_message">message</string>
+    <string name="set_screensaver_yes">set as wallpaper</string>
+
 </resources>

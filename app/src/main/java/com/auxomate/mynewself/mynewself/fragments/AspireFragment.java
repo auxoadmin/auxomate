@@ -13,10 +13,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -82,10 +84,19 @@ public class AspireFragment extends Fragment  {
     public Context applicationContext = HomeActivity.getContextOfApplication();
     FirebaseRecyclerAdapter<AspireRecycler,AspireViewHolder> firebaseRecyclerAdapter;
     private Paint p = new Paint();
+    FloatingActionButton fab;
+    PrefManager prefManager;
 
 
     public AspireFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mRecycler.setAdapter(firebaseRecyclerAdapter);
+
     }
 
     @Override
@@ -170,7 +181,7 @@ public class AspireFragment extends Fragment  {
                     Picasso.with(ctx).load(image).resize(150,150).into(imageView);
                 }
             });
-            Log.e("URL",image);
+//            Log.e("URL",image);
             imageUrl.add(image);
 
         }
@@ -186,7 +197,8 @@ public class AspireFragment extends Fragment  {
         RootView = inflater.inflate(R.layout.fragment_aspire, container, false);
         mRecycler = RootView.findViewById(R.id.aspire_recycler);
         mRecycler.setHasFixedSize(true);
-        mRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecycler.setLayoutManager(new GridLayoutManager(getActivity(),2));
+        fab = RootView.findViewById(R.id.aspire_fab_addvisual);
 
         //mDatabse = FirebaseDatabase.getInstance().getReference().child("Auxomate");
 
@@ -201,7 +213,7 @@ public class AspireFragment extends Fragment  {
 
     private void init() {
 
-        key = PrefManager.getString(getActivity(),PrefManager.PRF_USERKEY);
+        key = prefManager.getString(getActivity(),PrefManager.PRF_USERKEY);
 
         mStorage = FirebaseStorage.getInstance().getReference();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Auxomate").child(key);
@@ -209,6 +221,14 @@ public class AspireFragment extends Fragment  {
 
 
         mProgress= new ProgressDialog(getActivity());
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(),AddPostAspire.class));
+
+            }
+        });
 
     }
 
@@ -234,6 +254,9 @@ public class AspireFragment extends Fragment  {
         inflater.inflate(R.menu.add_menu_aspire,menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
+
+
+
 
 
     @Override
@@ -336,6 +359,14 @@ public class AspireFragment extends Fragment  {
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(mRecycler);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+        }
     }
 
 }

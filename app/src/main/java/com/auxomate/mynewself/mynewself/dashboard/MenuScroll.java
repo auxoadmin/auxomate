@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.ChangeBounds;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -23,7 +24,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.auxomate.mynewself.mynewself.R;
+import com.auxomate.mynewself.mynewself.fragments.AwareFragment;
 import com.auxomate.mynewself.mynewself.utilities.auxomate;
+import com.example.jean.jcplayer.JcPlayerManagerListener;
+import com.example.jean.jcplayer.general.JcStatus;
+import com.example.jean.jcplayer.model.JcAudio;
+import com.example.jean.jcplayer.view.JcPlayerView;
 
 
 import java.util.ArrayList;
@@ -31,7 +37,7 @@ import java.util.List;
 
 //import com.viewpagerindicator.LinePageIndicator;
 
-public class MenuScroll extends AppCompatActivity {
+public class MenuScroll extends AppCompatActivity implements JcPlayerManagerListener {
     private static final int SWIPE_THRESHOLD = 50;
     private static final int SWIPE_VELOCITY_THRESHOLD = 50;
     private static final int COLOR_TRUE_WHITE = -1;
@@ -53,6 +59,8 @@ public class MenuScroll extends AppCompatActivity {
     View view;
     GestureDetector gestureDetector;
     boolean isSlideUp = false;
+    public static JcPlayerView jcPlayerView;
+    AwareFragment awareFragment;
 
     public static int getPosition(int resultCode, Intent data) {
         if (resultCode == RESULT_OK && data != null && data.hasExtra("currentPosition")) {
@@ -66,6 +74,8 @@ public class MenuScroll extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_scroll);
+        jcPlayerView = findViewById(R.id.jcplayer);
+        jcPlayerView.setVisibility(View.GONE);
 
         isSlideUp = false;
         System.gc();
@@ -338,6 +348,54 @@ public class MenuScroll extends AppCompatActivity {
         AlphaAnimation anim = new AlphaAnimation(1.0f, 0.0f);
         anim.setDuration(transitionDuration);
         view.startAnimation(anim);
+    }
+
+    public static void playAudio(ArrayList<JcAudio> jcAudio, int position){
+        Log.d("HomeActivity","playaudio Called"+position+"  "+jcAudio);
+        jcPlayerView.initPlaylist(AwareFragment.jcAudios,null);
+        jcPlayerView.playAudio(jcPlayerView.getMyPlaylist().get(position));
+
+    }
+
+    @Override
+    public void onCompletedAudio() {
+
+    }
+
+    @Override
+    public void onContinueAudio(JcStatus jcStatus) {
+
+    }
+
+    @Override
+    public void onJcpError(Throwable throwable) {
+
+    }
+
+    @Override
+    public void onPaused(JcStatus jcStatus) {
+
+    }
+
+    @Override
+    public void onPlaying(JcStatus jcStatus) {
+
+    }
+
+    @Override
+    public void onPreparedAudio(JcStatus jcStatus) {
+
+    }
+
+    @Override
+    public void onStopped(JcStatus jcStatus) {
+
+    }
+
+    @Override
+    public void onTimeChanged(JcStatus jcStatus) {
+        awareFragment.updateProgress(jcStatus);
+
     }
 
 }

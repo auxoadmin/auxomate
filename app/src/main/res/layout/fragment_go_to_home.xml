@@ -33,6 +33,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/gotohome_button_next"
         android:text="Go To The Dashboard"
-        style="@style/Widget.AppCompat.Button.Colored"/>
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_gravity="center"
+
+        />
 
 </LinearLayout>

@@ -22,6 +22,7 @@ public class GoToHomeFragment extends Fragment implements View.OnClickListener{
     private View view;
     private TextView textViewName;
     private Button buttonNext;
+    PrefManager prefManager;
 
     public GoToHomeFragment() {
         // Required empty public constructor
@@ -41,7 +42,7 @@ public class GoToHomeFragment extends Fragment implements View.OnClickListener{
 
     private void init() {
 
-        String name = PrefManager.getString(getActivity(),PrefManager.PRF_USERNAME_WELCOME);
+        String name = prefManager.getString(getActivity(),PrefManager.PRF_USERNAME_WELCOME);
 
         textViewName = view.findViewById(R.id.gotohome_textview_name);
         textViewName.setText("Journey "+name+"!");

@@ -36,8 +36,10 @@
             android:name=".activities.HomeActivity"
             android:label="@string/title_activity_home"
             android:screenOrientation="portrait"/>
-        <activity android:name=".activities.AddPostAspire" />
-        <activity android:name=".activities.AspireGallery" />
+        <activity android:name=".activities.AddPostAspire"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".activities.AspireGallery"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".activities.AddTask"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -85,6 +87,10 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/logo_small" />
 
         <service
             android:name=".FCM.MyFirebaseInstanceIDService">

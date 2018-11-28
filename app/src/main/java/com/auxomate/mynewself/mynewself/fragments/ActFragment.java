@@ -9,12 +9,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
@@ -27,7 +29,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ScrollView;
+import android.widget.Scroller;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -80,7 +85,7 @@ public class ActFragment extends Fragment implements View.OnClickListener{
 
     EditText taskoneDes,tasktwoDes,taskthreeDes,taskoneTime,tasktwoTime,taskthreeTime,visualoneTime,visualtwoTime,
             visualthreeTime;
-    ImageButton editTask;
+
     Button submitBtn;
     PrefManager prefManager;
     TimePickerDialog timePickerDialog;
@@ -88,6 +93,8 @@ public class ActFragment extends Fragment implements View.OnClickListener{
     int currentHour;
     int currentMinute;
     String amPm;
+    FloatingActionButton fabedit,fabadd;
+    ScrollView frameLayout;
 
 
 
@@ -116,6 +123,7 @@ public class ActFragment extends Fragment implements View.OnClickListener{
         // Inflate the layout for this fragment
         setHasOptionsMenu(true);
         RootView = inflater.inflate(R.layout.fragment_act, container, false);
+
         //task1 = RootView.findViewById(R.id.task1);
 
 
@@ -151,25 +159,35 @@ public class ActFragment extends Fragment implements View.OnClickListener{
         visualthreeTime = RootView.findViewById(R.id.actFrament_edittext_schvthreetime);
         visualthreeTime.setEnabled(false);
         visualthreeTime.setOnClickListener(this);
+        frameLayout = RootView.findViewById(R.id.act_scrollview);
 
-        editTask = RootView.findViewById(R.id.act_imgbtn_edit);
+        fabedit = RootView.findViewById(R.id.act_edit);
         submitBtn = RootView.findViewById(R.id.actFragment_button_submit);
         submitBtn.setVisibility(View.GONE);
         submitBtn.setOnClickListener(this);
+        fabadd = RootView.findViewById(R.id.act_fab_addtask);
+
+        fabadd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(),AddTask.class));
+
+            }
+        });
 
 
-        taskoneDes.setText(PrefManager.getString(getActivity(),PrefManager.TASK1_DES));
-        tasktwoDes.setText(PrefManager.getString(getActivity(),PrefManager.TASK2_DES));
-        taskthreeDes.setText(PrefManager.getString(getActivity(),PrefManager.TASK3_DES));
+        taskoneDes.setText(prefManager.getString(getActivity(),PrefManager.TASK1_DES));
+        tasktwoDes.setText(prefManager.getString(getActivity(),PrefManager.TASK2_DES));
+        taskthreeDes.setText(prefManager.getString(getActivity(),PrefManager.TASK3_DES));
 
 
 
-        taskoneTime.setText(PrefManager.getString(getActivity(),PrefManager.TASK1Time));
-        tasktwoTime.setText(PrefManager.getString(getActivity(),PrefManager.TASK2Time));
-        taskthreeTime.setText(PrefManager.getString(getActivity(),PrefManager.TASK3Time));
-        visualoneTime.setText(PrefManager.getString(getActivity(),PrefManager.V1Time));
-        visualtwoTime.setText(PrefManager.getString(getActivity(),PrefManager.V2Time));
-        visualthreeTime.setText(PrefManager.getString(getActivity(),PrefManager.V3Time));
+        taskoneTime.setText(prefManager.getString(getActivity(),PrefManager.TASK1Time));
+        tasktwoTime.setText(prefManager.getString(getActivity(),PrefManager.TASK2Time));
+        taskthreeTime.setText(prefManager.getString(getActivity(),PrefManager.TASK3Time));
+        visualoneTime.setText(prefManager.getString(getActivity(),PrefManager.V1Time));
+        visualtwoTime.setText(prefManager.getString(getActivity(),PrefManager.V2Time));
+        visualthreeTime.setText(prefManager.getString(getActivity(),PrefManager.V3Time));
 
 
 
@@ -183,10 +201,12 @@ public class ActFragment extends Fragment implements View.OnClickListener{
 
 
 
-        editTask.setOnClickListener(new View.OnClickListener() {
+        fabedit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
               //  startActivity(new Intent(getActivity(),TaskSubmit.class));
+                frameLayout.setBackgroundColor(0XFAFAFA);
                 taskoneDes.setEnabled(true);
 
                 tasktwoDes.setEnabled(true);
@@ -272,10 +292,11 @@ public class ActFragment extends Fragment implements View.OnClickListener{
                         prefManager.set_tonehour(hourOfDay);
                         prefManager.set_tonemin(minutes);
 
+                        if(PrefManager.getBoolean(getActivity(),PrefManager.TASK_NOTIFICATION)) {
 
-                        //scheduleNotification(getNotification("Task 1"),hourOfDay,minutes,1);
-                        NotificationScheduler.setReminder(getActivity(), AlarmReceiver.class, prefManager.get_tonehour(), prefManager.get_tonemin(),1);
-
+                            //scheduleNotification(getNotification("Task 1"),hourOfDay,minutes,1);
+                            NotificationScheduler.setReminder(getActivity(), AlarmReceiver.class, prefManager.get_tonehour(), prefManager.get_tonemin(), 1);
+                        }
                         Log.d("hour","value:"+hourOfDay);
                         taskoneTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
                     }
@@ -300,10 +321,11 @@ public class ActFragment extends Fragment implements View.OnClickListener{
                         prefManager.set_ttwohour(hourOfDay);
                         prefManager.set_ttwomin(minutes);
 
+                        if(PrefManager.getBoolean(getActivity(),PrefManager.TASK_NOTIFICATION)) {
 
-                        //scheduleNotification(getNotification("Task 2"),hourOfDay,minutes,2);
-                        NotificationScheduler.setReminder(getActivity(), AlarmReceiver.class, prefManager.get_ttwohour(), prefManager.get_ttwomin(),2);
-
+                            //scheduleNotification(getNotification("Task 2"),hourOfDay,minutes,2);
+                            NotificationScheduler.setReminder(getActivity(), AlarmReceiver.class, prefManager.get_ttwohour(), prefManager.get_ttwomin(), 2);
+                        }
                         tasktwoTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
                     }
                 }, currentHour, currentMinute, false);
@@ -327,12 +349,13 @@ public class ActFragment extends Fragment implements View.OnClickListener{
 
                         prefManager.set_tthreehour(hourOfDay);
                         prefManager.set_tthreemin(minutes);
+                        if(PrefManager.getBoolean(getActivity(),PrefManager.TASK_NOTIFICATION)) {
 
-                        //scheduleNotification(getNotification("Task 3"),hourOfDay,minutes,3);
-                        NotificationScheduler.setReminder(getActivity(), AlarmReceiver.class, prefManager.get_tthreehour(), prefManager.get_tthreemin(),3);
-                        Log.d("getHourFromPref",prefManager.get_tonehour()+":"+prefManager.get_vonemin());
+                            //scheduleNotification(getNotification("Task 3"),hourOfDay,minutes,3);
+                            NotificationScheduler.setReminder(getActivity(), AlarmReceiver.class, prefManager.get_tthreehour(), prefManager.get_tthreemin(), 3);
+                            Log.d("getHourFromPref", prefManager.get_tonehour() + ":" + prefManager.get_vonemin());
 
-
+                        }
                         taskthreeTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
                     }
                 }, currentHour, currentMinute, false);
@@ -356,10 +379,11 @@ public class ActFragment extends Fragment implements View.OnClickListener{
 
                         prefManager.set_vonehour(hourOfDay);
                         prefManager.set_vonemin(minutes);
+                        if(PrefManager.getBoolean(getActivity(),PrefManager.VISUAL_NOTIFICATION)) {
 
-                        //scheduleNotification(getNotification("Visulization 1"),hourOfDay,minutes,4);
-                        NotificationScheduler.setReminder(getActivity(), AlarmReceiver.class, prefManager.get_vonehour(), prefManager.get_vonemin(),4);
-
+                            //scheduleNotification(getNotification("Visulization 1"),hourOfDay,minutes,4);
+                            NotificationScheduler.setReminder(getActivity(), AlarmReceiver.class, prefManager.get_vonehour(), prefManager.get_vonemin(), 4);
+                        }
                         visualoneTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
                     }
                 }, currentHour, currentMinute, false);
@@ -384,9 +408,10 @@ public class ActFragment extends Fragment implements View.OnClickListener{
                         prefManager.set_vtwohour(hourOfDay);
                         prefManager.set_vtwoemin(minutes);
                         // scheduleNotification(getNotification("Visulization 2"),hourOfDay,minutes,5);
+                        if(PrefManager.getBoolean(getActivity(),PrefManager.VISUAL_NOTIFICATION)) {
 
-                        NotificationScheduler.setReminder(getActivity(), AlarmReceiver.class, prefManager.get_vtwohour(), prefManager.get_vtwomin(),5);
-
+                            NotificationScheduler.setReminder(getActivity(), AlarmReceiver.class, prefManager.get_vtwohour(), prefManager.get_vtwomin(), 5);
+                        }
                         visualtwoTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
                     }
                 }, currentHour, currentMinute, false);
@@ -412,9 +437,10 @@ public class ActFragment extends Fragment implements View.OnClickListener{
                         prefManager.set_vthreemin(minutes);
 
                         //scheduleNotification(getNotification("Visulization 3"),hourOfDay,minutes,6);
+                        if(PrefManager.getBoolean(getActivity(),PrefManager.VISUAL_NOTIFICATION)) {
 
-                        NotificationScheduler.setReminder(getActivity(), AlarmReceiver.class, prefManager.get_vthreehour(), prefManager.get_vthreemin(),6);
-
+                            NotificationScheduler.setReminder(getActivity(), AlarmReceiver.class, prefManager.get_vthreehour(), prefManager.get_vthreemin(), 6);
+                        }
                         visualthreeTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
 
                     }
@@ -424,24 +450,25 @@ public class ActFragment extends Fragment implements View.OnClickListener{
 
             case R.id.actFragment_button_submit:
                 taskoneDes.setEnabled(false);
-                PrefManager.putString(getActivity(),PrefManager.TASK1_DES,taskoneDes.getText().toString());
+                prefManager.putString(getActivity(),PrefManager.TASK1_DES,taskoneDes.getText().toString());
                 tasktwoDes.setEnabled(false);
-                PrefManager.putString(getActivity(),PrefManager.TASK2_DES,tasktwoDes.getText().toString());
+                prefManager.putString(getActivity(),PrefManager.TASK2_DES,tasktwoDes.getText().toString());
                 taskthreeDes.setEnabled(false);
-                PrefManager.putString(getActivity(),PrefManager.TASK3_DES,taskthreeDes.getText().toString());
+                prefManager.putString(getActivity(),PrefManager.TASK3_DES,taskthreeDes.getText().toString());
                 taskoneTime.setEnabled(false);
                 tasktwoTime.setEnabled(false);
                 taskthreeTime.setEnabled(false);
                 visualoneTime.setEnabled(false);
                 visualtwoTime.setEnabled(false);
                 visualthreeTime.setEnabled(false);
-                PrefManager.putString(getActivity(),PrefManager.TASK1Time,taskoneTime.getText().toString());
-                PrefManager.putString(getActivity(),PrefManager.TASK2Time,tasktwoTime.getText().toString());
-                PrefManager.putString(getActivity(),PrefManager.TASK3Time,taskthreeTime.getText().toString());
-                PrefManager.putString(getActivity(),PrefManager.V1Time,visualoneTime.getText().toString());
-                PrefManager.putString(getActivity(),PrefManager.V2Time,visualtwoTime.getText().toString());
-                PrefManager.putString(getActivity(),PrefManager.V3Time,visualthreeTime.getText().toString());
+                prefManager.putString(getActivity(),PrefManager.TASK1Time,taskoneTime.getText().toString());
+                prefManager.putString(getActivity(),PrefManager.TASK2Time,tasktwoTime.getText().toString());
+                prefManager.putString(getActivity(),PrefManager.TASK3Time,taskthreeTime.getText().toString());
+                prefManager.putString(getActivity(),PrefManager.V1Time,visualoneTime.getText().toString());
+                prefManager.putString(getActivity(),PrefManager.V2Time,visualtwoTime.getText().toString());
+                prefManager.putString(getActivity(),PrefManager.V3Time,visualthreeTime.getText().toString());
                 submitBtn.setVisibility(View.GONE);
+                frameLayout.setBackgroundColor(0Xb0b1b2);
 
                 break;
 

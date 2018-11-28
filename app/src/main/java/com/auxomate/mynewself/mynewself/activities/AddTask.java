@@ -69,6 +69,7 @@ public class AddTask extends AppCompatActivity {
     private static String visionString;
     Uri resultUri = null;
     ImageButton mMainImage;
+    PrefManager prefManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +88,8 @@ public class AddTask extends AppCompatActivity {
         mMainImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PrefManager.putString(getApplicationContext(),PrefManager.PRF_FROMWHERE_FRAGS,"act");
+
+                prefManager.putString(getApplicationContext(),PrefManager.PRF_FROMWHERE_FRAGS,"act");
                 imagePicker();
 
             }

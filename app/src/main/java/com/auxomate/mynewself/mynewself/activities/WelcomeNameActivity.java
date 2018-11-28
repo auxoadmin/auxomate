@@ -39,7 +39,7 @@ public class WelcomeNameActivity extends FragmentActivity implements View.OnClic
     EditText nameEdt;
 
     public ViewPager viewPagerFrags;
-    public Button buttonNext, buttonSkip;
+   // public Button buttonNext, buttonSkip;
     public boolean isUserSet = false;
 
     public UserNameFragment userNameFragment;
@@ -55,7 +55,7 @@ public class WelcomeNameActivity extends FragmentActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (PrefManager.getBoolean(this,PrefManager.PRF_WELCOME_BOARDS)) {
+        if (prefManager.getBoolean(this,PrefManager.PRF_WELCOME_BOARDS)) {
 
             startActivity(new Intent(WelcomeNameActivity.this, HomeActivity.class));
 
@@ -78,12 +78,12 @@ public class WelcomeNameActivity extends FragmentActivity implements View.OnClic
 
     private void init() {
 
-        buttonNext = findViewById(R.id.welcomename_button_next);
-        buttonNext.setOnClickListener(this);
-        buttonNext.setVisibility(View.GONE);
-
-        buttonSkip = findViewById(R.id.welcomename_button_skip);
-        buttonSkip.setOnClickListener(this);
+       // buttonNext = findViewById(R.id.welcomename_button_next);
+//        buttonNext.setOnClickListener(this);
+//        buttonNext.setVisibility(View.GONE);
+//
+//       // buttonSkip = findViewById(R.id.welcomename_button_skip);
+//        buttonSkip.setOnClickListener(this);
 
         viewPagerFrags = findViewById(R.id.welcomname_viewpager_frags);
         setupViewPager(viewPagerFrags);
@@ -97,40 +97,45 @@ public class WelcomeNameActivity extends FragmentActivity implements View.OnClic
 
             @Override
             public void onPageSelected(int position) {
-                switch (position){
-                    case 0:
-                        buttonSkip.setVisibility(View.GONE);
-                      //  buttonNext.setVisibility(View.VISIBLE);
-                        buttonNext.setVisibility(View.GONE);
-                        break;
-                    case 1:
-                        buttonSkip.setVisibility(View.GONE);
-                        buttonNext.setText("Begin reinventing yourself!!!");
-                        buttonNext.setVisibility(View.VISIBLE);
-                        break;
-                    case 2:
-                        buttonSkip.setVisibility(View.VISIBLE);
-                        buttonNext.setText("Next");
-                        buttonNext.setVisibility(View.VISIBLE);
-                        break;
-                    case 3:
-                        buttonSkip.setVisibility(View.VISIBLE);
-                        buttonNext.setVisibility(View.VISIBLE);
-                        break;
-                    case 4:
-                        buttonSkip.setVisibility(View.VISIBLE);
-                        buttonNext.setVisibility(View.VISIBLE);
-                        break;
-                    case 5:
-                        buttonSkip.setVisibility(View.GONE);
-                        buttonNext.setVisibility(View.VISIBLE);
-                        break;
-                    case 6:
-                        buttonSkip.setVisibility(View.GONE);
-                        buttonNext.setVisibility(View.GONE);
-                        break;
-                }
+
             }
+
+//            @Override
+//            public void onPageSelected(int position) {
+//                switch (position){
+//                    case 0:
+//                        buttonSkip.setVisibility(View.GONE);
+//                      //  buttonNext.setVisibility(View.VISIBLE);
+//                        buttonNext.setVisibility(View.GONE);
+//                        break;
+//                    case 1:
+//                        buttonSkip.setVisibility(View.GONE);
+//                       // buttonNext.setText("Begin reinventing yourself!!!");
+//                        buttonNext.setVisibility(View.VISIBLE);
+//                        break;
+//                    case 2:
+//                        buttonSkip.setVisibility(View.VISIBLE);
+//                        buttonNext.setText("Next");
+//                        buttonNext.setVisibility(View.VISIBLE);
+//                        break;
+//                    case 3:
+//                        buttonSkip.setVisibility(View.VISIBLE);
+//                        buttonNext.setVisibility(View.VISIBLE);
+//                        break;
+//                    case 4:
+//                        buttonSkip.setVisibility(View.VISIBLE);
+//                        buttonNext.setVisibility(View.VISIBLE);
+//                        break;
+//                    case 5:
+//                        buttonSkip.setVisibility(View.GONE);
+//                        buttonNext.setVisibility(View.VISIBLE);
+//                        break;
+//                    case 6:
+//                        buttonSkip.setVisibility(View.GONE);
+//                        buttonNext.setVisibility(View.GONE);
+//                        break;
+//                }
+//            }
 
             @Override
             public void onPageScrollStateChanged(int state) {
@@ -168,11 +173,11 @@ public class WelcomeNameActivity extends FragmentActivity implements View.OnClic
         Adapter adapter = new Adapter(getSupportFragmentManager());
         adapter.addFragment(userNameFragment, "User Name");
         adapter.addFragment(userWelcomeFragment, "User Welcome");
-        adapter.addFragment(awareFragment, "Aware");
-        adapter.addFragment(aspireFragment, "Aspire");
-        adapter.addFragment(actFragment, "Act");
-        adapter.addFragment(userprofileFragment, "User Profile");
-        adapter.addFragment(goToHomeFragment, "Go To Home");
+//        adapter.addFragment(awareFragment, "Aware");
+//        adapter.addFragment(aspireFragment, "Aspire");
+//        adapter.addFragment(actFragment, "Act");
+//        adapter.addFragment(userprofileFragment, "User Profile");
+ //       adapter.addFragment(goToHomeFragment, "Go To Home");
         viewPager.setAdapter(adapter);
 
 
@@ -221,29 +226,33 @@ public class WelcomeNameActivity extends FragmentActivity implements View.OnClic
 
                 break;
 
-            case R.id.welcomename_button_next:
-
-                if (viewPagerFrags.getCurrentItem()==0){
-
-                    viewPagerFrags.setCurrentItem(viewPagerFrags.getCurrentItem() + 1, true);
-
-                }else if (viewPagerFrags.getCurrentItem() == 5){
-
-                    Intent intent = new Intent(WelcomeNameActivity.this,HomeActivity.class);
-                    startActivity(intent);
-                    this.finish();
-
-                }else {
-                    viewPagerFrags.setCurrentItem(viewPagerFrags.getCurrentItem() + 1, true);
-                }
-
-                break;
-
-            case R.id.welcomename_button_skip:
-                Intent intent = new Intent(WelcomeNameActivity.this,HomeActivity.class);
-                startActivity(intent);
-                this.finish();
-                break;
+//            case R.id.welcomename_button_next:
+//
+//                if (viewPagerFrags.getCurrentItem()==0){
+//
+//                    viewPagerFrags.setCurrentItem(viewPagerFrags.getCurrentItem() + 1, true);
+//
+//                }else if (viewPagerFrags.getCurrentItem() == 5){
+//
+//                    Intent intent = new Intent(WelcomeNameActivity.this,HomeActivity.class);
+//                    startActivity(intent);
+//                    this.finish();
+//
+//                }else if(viewPagerFrags.getCurrentItem() == 1){
+//                    viewPagerFrags.setCurrentItem(6, true);
+//                }
+//
+//                else {
+//                    viewPagerFrags.setCurrentItem(viewPagerFrags.getCurrentItem() + 1, true);
+//                }
+//
+//                break;
+//
+//            case R.id.welcomename_button_skip:
+//                Intent intent = new Intent(WelcomeNameActivity.this,HomeActivity.class);
+//                startActivity(intent);
+//                this.finish();
+//                break;
         }
     }
 

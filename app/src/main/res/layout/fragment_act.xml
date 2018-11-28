@@ -1,29 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
     android:background="#b0b1b2"
-    android:padding="16dp"
-    tools:context=".fragments.ActFragment">
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/act_imgbtn_edit"
-        android:src="@drawable/ic_edit_black_24dp"
-        android:layout_gravity="right"
-        android:background="@android:color/transparent"/>
+    tools:context=".fragments.ActFragment"
+    android:id="@+id/act_frame_mainlayout"
+   >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@color/black"
+        android:id="@+id/textview_act"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Daily action page"
+            android:layout_marginTop="4dp"
+            android:layout_gravity="center"
+            android:textColor="#ffff"
+            android:textAlignment="center"
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+            />
+    </LinearLayout>
+
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activities.TaskSubmit"
+
         tools:layout_editor_absoluteY="81dp"
-        android:layout_marginBottom="56dp">
+        android:id="@+id/act_scrollview">
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,12 +42,21 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_gravity="right"
+                android:orientation="horizontal">
+
+
+            </LinearLayout>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Primary Task"
                 android:textSize="16sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <Space
                 android:layout_width="match_parent"
@@ -45,19 +65,19 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Task 1"/>
+                android:text="Task 1" />
 
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="4dp" />
 
             <EditText
+                android:id="@+id/actFrament_edittext_pttaskone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/actFrament_edittext_pttaskone"
                 android:hint="Write something here"
                 android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
-                android:maxLines="5"/>
+                android:maxLines="5" />
 
             <Space
                 android:layout_width="match_parent"
@@ -68,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:text="Secondary Tasks"
                 android:textSize="16sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <Space
                 android:layout_width="match_parent"
@@ -77,19 +97,19 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Task 2"/>
+                android:text="Task 2" />
 
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="4dp" />
 
             <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/actFrament_edittext_sttasktwo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:hint="Write something here"
                 android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
-                android:maxLines="5"/>
+                android:maxLines="5" />
 
             <Space
                 android:layout_width="match_parent"
@@ -98,19 +118,19 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Task 3"/>
+                android:text="Task 3" />
 
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="4dp" />
 
             <EditText
+                android:id="@+id/actFrament_edittext_sttaskthree"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/actFrament_edittext_sttaskthree"
                 android:hint="Write something here"
                 android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
-                android:maxLines="5"/>
+                android:maxLines="5" />
 
             <Space
                 android:layout_width="match_parent"
@@ -121,7 +141,7 @@
                 android:layout_height="wrap_content"
                 android:text="Schedule Tasks (Start time / Duration)"
                 android:textSize="16sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <Space
                 android:layout_width="match_parent"
@@ -136,23 +156,22 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Task 1"/>
+                    android:text="Task 1" />
 
                 <Space
                     android:layout_width="8dp"
                     android:layout_height="match_parent" />
 
                 <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/actFrament_edittext_schttaskonetime"
-                    android:hint="Time"
-                    android:inputType="time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
                     android:clickable="true"
-                    />
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:hint="Time"
+                    android:inputType="time" />
 
                 <Space
                     android:layout_width="4dp"
@@ -161,24 +180,23 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:gravity="center"
                     android:text="/"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
                     android:textAlignment="center"
-                    android:gravity="center"/>
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <Space
                     android:layout_width="4dp"
                     android:layout_height="match_parent" />
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/actFrament_edittext_schttaskoneduration"
-                    android:hint="Duration"
-                    android:inputType="number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    />
+                    android:hint="Duration"
+                    android:inputType="number" />
 
             </LinearLayout>
 
@@ -195,22 +213,22 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Task 2"/>
+                    android:text="Task 2" />
 
                 <Space
                     android:layout_width="8dp"
                     android:layout_height="match_parent" />
 
                 <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/actFrament_edittext_schttasktwotime"
-                    android:hint="Time"
-                    android:inputType="time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0.5"
+                    android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    android:clickable="true"/>
+                    android:hint="Time"
+                    android:inputType="time" />
 
                 <Space
                     android:layout_width="4dp"
@@ -219,23 +237,23 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:gravity="center"
                     android:text="/"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
                     android:textAlignment="center"
-                    android:gravity="center"/>
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <Space
                     android:layout_width="4dp"
                     android:layout_height="match_parent" />
 
                 <TextView
+                    android:id="@+id/actFrament_edittext_schttasktwoduration"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/actFrament_edittext_schttasktwoduration"
+                    android:layout_weight="0.5"
                     android:hint="Duration"
-                    android:inputType="number"
-                    android:layout_weight="0.5"/>
+                    android:inputType="number" />
 
             </LinearLayout>
 
@@ -252,22 +270,22 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Task 3"/>
+                    android:text="Task 3" />
 
                 <Space
                     android:layout_width="8dp"
                     android:layout_height="match_parent" />
 
                 <EditText
+                    android:id="@+id/actFrament_edittext_schttaskthreetime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/actFrament_edittext_schttaskthreetime"
-                    android:hint="Time"
-                    android:inputType="time"
                     android:layout_weight="0.5"
+                    android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    android:clickable="true"/>
+                    android:hint="Time"
+                    android:inputType="time" />
 
                 <Space
                     android:layout_width="4dp"
@@ -276,23 +294,23 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:gravity="center"
                     android:text="/"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
                     android:textAlignment="center"
-                    android:gravity="center"/>
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <Space
                     android:layout_width="4dp"
                     android:layout_height="match_parent" />
 
                 <TextView
+                    android:id="@+id/actFrament_edittext_schttaskthreeduration"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/actFrament_edittext_schttaskthreeduration"
+                    android:layout_weight="0.5"
                     android:hint="Duration"
-                    android:inputType="number"
-                    android:layout_weight="0.5"/>
+                    android:inputType="number" />
 
             </LinearLayout>
 
@@ -305,7 +323,7 @@
                 android:layout_height="wrap_content"
                 android:text="Schedule Visualizations (Start time)"
                 android:textSize="16sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <Space
                 android:layout_width="match_parent"
@@ -319,22 +337,22 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="V1"/>
+                    android:text="V1" />
 
                 <Space
                     android:layout_width="8dp"
                     android:layout_height="match_parent" />
 
                 <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/actFrament_edittext_schvonetime"
-                    android:hint="Time"
-                    android:inputType="time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0.5"
+                    android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    android:clickable="true"/>
+                    android:hint="Time"
+                    android:inputType="time" />
 
                 <Space
                     android:layout_width="4dp"
@@ -343,22 +361,22 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="V2"/>
+                    android:text="V2" />
 
                 <Space
                     android:layout_width="8dp"
                     android:layout_height="match_parent" />
 
                 <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/actFrament_edittext_schvtwotime"
-                    android:hint="Time"
-                    android:inputType="time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0.5"
+                    android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    android:clickable="true"/>
+                    android:hint="Time"
+                    android:inputType="time" />
 
                 <Space
                     android:layout_width="4dp"
@@ -367,34 +385,54 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="V3"/>
+                    android:text="V3" />
 
                 <Space
                     android:layout_width="8dp"
                     android:layout_height="match_parent" />
 
                 <EditText
+                    android:id="@+id/actFrament_edittext_schvthreetime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/actFrament_edittext_schvthreetime"
-                    android:hint="Time"
-                    android:inputType="time"
                     android:layout_weight="0.5"
+                    android:clickable="true"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    android:clickable="true"/>
+                    android:hint="Time"
+                    android:inputType="time" />
 
             </LinearLayout>
+
             <Button
+                android:id="@+id/actFragment_button_submit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/actFragment_button_submit"
-                android:text="Done"
-                />
+                android:text="Done" />
 
 
         </LinearLayout>
+
+
     </ScrollView>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/act_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_edit_white"
+        android:layout_marginLeft="250dp"
+        android:layout_marginTop="31dp"/>
 
-</LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/act_fab_addtask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:src="@drawable/ic_add_white_24dp"
+        android:layout_marginTop="31dp"/>
+
+
+
+</FrameLayout>

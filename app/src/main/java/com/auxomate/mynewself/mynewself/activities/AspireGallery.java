@@ -42,6 +42,7 @@ public class AspireGallery extends AppCompatActivity {
     String key;
     ArrayList<String> urlList ;
     ArrayList<String> desc ;
+    PrefManager prefManager;
 
 
 
@@ -50,7 +51,7 @@ public class AspireGallery extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aspire_gallery);
-        key = PrefManager.getString(this,PrefManager.PRF_USERKEY);
+        key = prefManager.getString(this,PrefManager.PRF_USERKEY);
         urlList = new ArrayList<>();
         desc = new ArrayList<>();
 

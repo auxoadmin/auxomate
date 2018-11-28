@@ -38,6 +38,7 @@ public class UserNameFragment extends Fragment {
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
     private boolean isDone;
     private Button buttonSubmit;
+    PrefManager prefManager;
 
     public UserNameFragment() {
         // Required empty public constructor
@@ -94,7 +95,7 @@ public class UserNameFragment extends Fragment {
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
-        PrefManager.putString(getActivity(),PrefManager.PRF_USERNAME_WELCOME,name);
+        prefManager.putString(getActivity(),PrefManager.PRF_USERNAME_WELCOME,name);
         String key = databaseReference.child("users").push().getKey();
 
         databaseReference.child("users").child(key).child("user_name").setValue(name).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -103,9 +104,9 @@ public class UserNameFragment extends Fragment {
 
                 if (task.isSuccessful()) {
                     progressDialog.dismiss();
-                    PrefManager.putString(getActivity(),PrefManager.PRF_USERKEY,key);
+                    prefManager.putString(getActivity(),PrefManager.PRF_USERKEY,key);
 
-                    PrefManager.putBoolean(getActivity(),PrefManager.PRF_WELCOME_BOARDS,true);
+                    prefManager.putBoolean(getActivity(),PrefManager.PRF_WELCOME_BOARDS,true);
                     // Toast.makeText(getActivity(), "User created!", Toast.LENGTH_LONG).show();
                     ((WelcomeNameActivity)getActivity()).viewPagerFrags.setCurrentItem(((WelcomeNameActivity)getActivity()).viewPagerFrags.getCurrentItem()+1, true);
                     isDone = true;

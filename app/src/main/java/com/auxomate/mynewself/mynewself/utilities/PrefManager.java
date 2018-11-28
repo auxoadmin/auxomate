@@ -22,6 +22,10 @@ public class PrefManager {
     public static final String PRF_USERKEY = "prf_userkey";
 
     private static final String APP_SHARED_PREFS = "RemindMePref";
+    public static String TASK_NOTIFICATION = "task_notification";
+    public static String VISUAL_NOTIFICATION = "visula_notification";
+    public static String GRATI_NOTIFICATION = "grati_notification";
+    public static String SSAVER_NOTIFICATION = "ssaver_notofication";
 
     private SharedPreferences appSharedPrefs;
     private SharedPreferences.Editor prefsEditor;

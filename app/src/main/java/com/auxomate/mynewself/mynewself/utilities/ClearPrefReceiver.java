@@ -11,7 +11,7 @@ public class ClearPrefReceiver extends BroadcastReceiver {
     PrefManager prefManager;
     public void onReceive (Context context, Intent intent) {
 
-    PrefManager.resetPref(HomeActivity.getContextOfApplication());
+    prefManager.reset();
 
 
     }

@@ -5,17 +5,46 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.AspireFragment"
-    android:layout_marginBottom="56dp">
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@color/black"
+        android:id="@+id/textview_aspire"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Your visualizations"
+            android:layout_marginTop="4dp"
+            android:layout_gravity="center"
+            android:textColor="#ffff"
+            android:textAlignment="center"
+            />
+    </LinearLayout>
 
 
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/aspire_recycler"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_below="@+id/textview_aspire"
+        android:layout_centerHorizontal="true"
+
         >
 
     </android.support.v7.widget.RecyclerView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/aspire_fab_addvisual"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_add_white_24dp" />
+
+
 
 
 </RelativeLayout>

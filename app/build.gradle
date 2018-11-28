@@ -67,6 +67,9 @@ dependencies {
     implementation 'com.squareup.okhttp:okhttp:2.5.0'
     implementation 'com.kailashdabhi:om-recorder:1.1.5'
     implementation 'net.alhazmy13.wordcloud:library:0.2.0-beta'
+    implementation 'com.github.jeancsanchez:JcPlayer:2.6.13'
+    implementation 'com.android.volley:volley:1.1.0'
+
 
 
 }

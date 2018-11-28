@@ -37,6 +37,7 @@ public class NotificationScheduler {
     public static final String TAG="NotificationScheduler";
 
 
+
     public static void setReminder(Context context, Class<?> cls, int hour, int min,int m)
     {
         Calendar calendar = Calendar.getInstance();
@@ -92,8 +93,9 @@ public class NotificationScheduler {
 
     public static void showNotification(Context context,Class<?> cls,int m)
     {
-        PrefManager prefManager;
+        PrefManager prefManager = new PrefManager(context);
         Log.d(TAG,"called");
+
 
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -125,7 +127,7 @@ public class NotificationScheduler {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context,NOTIFICATION_CHANNEL_ID);
 
         Notification notification = builder.setContentTitle("TASK 1")
-                .setContentText(PrefManager.getString(context,PrefManager.TASK1_DES))
+                .setContentText(prefManager.getString(context,PrefManager.TASK1_DES))
                 .setAutoCancel(true)
                 .setSound(alarmSound)
 
@@ -135,14 +137,14 @@ public class NotificationScheduler {
 
 
         Notification notificationTask2 = builder.setContentTitle("TASK 2")
-                .setContentText(PrefManager.getString(context,PrefManager.TASK2_DES))
+                .setContentText(prefManager.getString(context,PrefManager.TASK2_DES))
                 .setAutoCancel(true)
                 .setSound(alarmSound)
 
                 .setSmallIcon(R.drawable.mainlogo_48dp)
                 .setContentIntent(pendingIntent).build();
         Notification notificationTask3 = builder.setContentTitle("TASK 3")
-                .setContentText(PrefManager.getString(context,PrefManager.TASK3_DES))
+                .setContentText(prefManager.getString(context,PrefManager.TASK3_DES))
                 .setAutoCancel(true)
                 .setSound(alarmSound)
 

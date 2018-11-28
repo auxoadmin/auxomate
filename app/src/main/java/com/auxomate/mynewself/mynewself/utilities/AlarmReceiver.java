@@ -16,6 +16,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     String TAG = "AlarmReceiver";
     public static String NOTIFICATION_ID = "notification-id";
     public static String NOTIFICATION = "notification";
+    PrefManager prefManager;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -36,11 +37,12 @@ public class AlarmReceiver extends BroadcastReceiver {
         int m = intent.getIntExtra("nID",9);
 
         Log.d("getNotificationIntent","ID"+m);
-        if(m<=3)
+
+        if(m<=3 && PrefManager.getBoolean(context,PrefManager.TASK_NOTIFICATION))
         {
             NotificationScheduler.showNotification(context, HomeActivity.class, m);
         }
-        else
+        else if (m>=3 && PrefManager.getBoolean(context,PrefManager.VISUAL_NOTIFICATION))
         {
             NotificationScheduler.showNotification(context, AspireGallery.class, m);
         }

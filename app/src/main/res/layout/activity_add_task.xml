@@ -14,6 +14,6 @@
         android:id="@+id/act_imgbutton_add"
         android:adjustViewBounds="true"
         android:scaleType="fitXY"
-        android:src="@drawable/add_btn"/>
+        android:src="@drawable/add_btnact"/>
 
 </android.support.design.widget.CoordinatorLayout>

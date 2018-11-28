@@ -22,6 +22,9 @@ public class auxomate extends Application{
 
         super.onCreate();
 
+        PrefManager.putBoolean(this,PrefManager.TASK_NOTIFICATION,true);
+        PrefManager.putBoolean(this,PrefManager.VISUAL_NOTIFICATION,true);
+
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         Picasso.Builder builder = new Picasso.Builder(this);

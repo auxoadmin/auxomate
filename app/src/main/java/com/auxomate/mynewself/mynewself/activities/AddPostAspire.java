@@ -52,6 +52,7 @@ public class AddPostAspire extends AppCompatActivity implements View.OnClickList
 
     private static final int MAX_DIMENSION = 1200;
     Uri uploadUri;
+    PrefManager prefManager;
 
 
 
@@ -67,6 +68,8 @@ public class AddPostAspire extends AppCompatActivity implements View.OnClickList
     }
 
     private void init() {
+
+        //prefManager.getString(getApplicationContext(),PrefManager.PRF_USERKEY);
 
         key = PrefManager.getString(getApplicationContext(),PrefManager.PRF_USERKEY);
 

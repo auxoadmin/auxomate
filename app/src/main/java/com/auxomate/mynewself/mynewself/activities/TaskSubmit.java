@@ -34,10 +34,14 @@ import com.auxomate.mynewself.mynewself.utilities.AlarmReceiver;
 import com.auxomate.mynewself.mynewself.utilities.NotificationScheduler;
 import com.auxomate.mynewself.mynewself.utilities.PrefManager;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.StringTokenizer;
 
 public class TaskSubmit extends AppCompatActivity implements View.OnClickListener{
     private String result = null;
@@ -160,41 +164,59 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
 
                 if(2<=vtask.length) {
                     String schttask1 = vtask[1].split("/")[0];
+                    Log.d("stask1",schttask1);
                     String[] taskOneTime=schttask1.split(":");
-                    NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(taskOneTime[0]), Integer.parseInt(taskOneTime[1]),1);
-                    editTextSchTOneTime.setText(schttask1);
+                    String[] toneMin = taskOneTime[1].split("AM|PM");
+
+
+                   //  NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(taskOneTime[0]), Integer.parseInt(toneMin[0].trim()),1);
+                    editTextSchTOneTime.setText(convertTime(schttask1,1));
                     if (2 <= splitvTask2.length) {
                         String schttask2 = splitvTask2[1].split("/")[0];
-                        String[] taskTwoTime=schttask2.split(":");
-                        editTextSchTTwoTime.setText(schttask2);
-                        NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(taskTwoTime[0]), Integer.parseInt(taskTwoTime[1]),2);
+                        Log.d("stask2",schttask2);
+
+
+
+                        editTextSchTTwoTime.setText(convertTime(schttask2,2));
+
+                      //  NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(taskTwoTime[0]), Integer.parseInt(ttwoMin[0].trim()),2);
                         if (2 <= splitvTask3.length) {
                             String schttask3 = splitvTask3[1].split("/")[0];
-                            String[] taskThreeTime=schttask3.split(":");
-                            Log.d("taskthreehour",taskThreeTime[0]);
-                            Log.d("taskthreemin",taskThreeTime[1]);
-                            NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(taskThreeTime[0]), Integer.parseInt(taskThreeTime[1]),3);
-                            editTextSchTThreeTime.setText(schttask3);
+                            Log.d("stask3",schttask3);
+
+
+
+                          //  NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(taskThreeTime[0]), Integer.parseInt(tthreeMin[0].trim()),3);
+                            editTextSchTThreeTime.setText(convertTime(schttask3,3));
 
 
                             String[] visualTime3 = splitVisual[1].split("(\\s|^)v 3(\\s|$)|(\\s|^)v3(\\s|$)|(\\s|^)V3(\\s|$)|(\\s|^)03(\\s|$)");
                             String[] visualTime2 = visualTime3[0].split("(\\s|^)v 2(\\s|$)|(\\s|^)v2(\\s|$)|(\\s|^)V2(\\s|$)");
-                            String[] visualTime1 = visualTime2[0].split("(\\s|^)v 1(\\s|$)|(\\s|^)v1(\\s|$)|(\\s|^)V1(\\s|$)|(\\s|^)vi(\\s|$)");
+                            String[] visualTime1 = visualTime2[0].split("(\\s|^)v 1(\\s|$)|(\\s|^)v1(\\s|$)|(\\s|^)V1(\\s|$)|(\\s|^)vi(\\s|$)|(\\s|^)Vi(\\s|$)");
 
                             if ( 2 <= visualTime1.length) {
-                                editTextSchVOneTime.setText(visualTime1[1]);
-                                String[] vOneTime = visualTime1[1].split(":");
-                                NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(vOneTime[0]), Integer.parseInt(vOneTime[1]),4);
+                                editTextSchVOneTime.setText(convertTime(visualTime1[1],4));
+                                Log.d("vtask1",visualTime1[1]);
+
+
+
+                              //  NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(vOneTime[0]), Integer.parseInt(voneMin[0].trim()),4);
 
                                 if (2 <= visualTime2.length) {
-                                    editTextSchVTwoTime.setText(visualTime2[1]);
-                                    String[] vTwoTime = visualTime2[1].split(":");
-                                    NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(vTwoTime[0]), Integer.parseInt(vTwoTime[1]),5);
+                                    editTextSchVTwoTime.setText(convertTime(visualTime2[1],5));
+                                    Log.d("vtask2",visualTime2[1]);
+
+
+
+                                   // NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(vTwoTime[0]), Integer.parseInt(vtwoMin[0].trim()),5);
 
                                     if (2 <= visualTime3.length) {
-                                        editTextSchVThreeTime.setText(visualTime3[1]);
-                                        String[] vThreeTime = visualTime3[1].split(":");
-                                        NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(vThreeTime[0]), Integer.parseInt(vThreeTime[1]),6);
+                                        editTextSchVThreeTime.setText(convertTime(visualTime3[1],6));
+                                        Log.d("vtask3",visualTime3[1]);
+
+                                       
+
+                                       // NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(vThreeTime[0]), Integer.parseInt(vthreeMin[0].trim()),6);
                                     }
                                 }
                             }
@@ -254,8 +276,9 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
 
 
                         //scheduleNotification(getNotification("Task 1"),hourOfDay,minutes,1);
-                        NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, localData.get_tonehour(), localData.get_tonemin(),1);
-
+                        if(PrefManager.getBoolean(getApplicationContext(),PrefManager.TASK_NOTIFICATION)) {
+                            NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, localData.get_tonehour(), localData.get_tonemin(), 1);
+                        }
                         Log.d("hour","value:"+hourOfDay);
                         editTextSchTOneTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
                     }
@@ -282,8 +305,10 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
 
 
                         //scheduleNotification(getNotification("Task 2"),hourOfDay,minutes,2);
-                        NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, localData.get_ttwohour(), localData.get_ttwomin(),2);
+                        if(PrefManager.getBoolean(getApplicationContext(),PrefManager.TASK_NOTIFICATION)) {
 
+                            NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, localData.get_ttwohour(), localData.get_ttwomin(), 2);
+                        }
                         editTextSchTTwoTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
                     }
                 }, currentHour, currentMinute, false);
@@ -307,9 +332,10 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
 
                         localData.set_tthreehour(hourOfDay);
                         localData.set_tthreemin(minutes);
-
-                        //scheduleNotification(getNotification("Task 3"),hourOfDay,minutes,3);
-                        NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, localData.get_tthreehour(), localData.get_tthreemin(),3);
+                        if(PrefManager.getBoolean(getApplicationContext(),PrefManager.TASK_NOTIFICATION)) {
+                            //scheduleNotification(getNotification("Task 3"),hourOfDay,minutes,3);
+                            NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, localData.get_tthreehour(), localData.get_tthreemin(), 3);
+                        }
                         Log.d("getHourFromPref",localData.get_tonehour()+":"+localData.get_vonemin());
 
 
@@ -338,7 +364,10 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
                         localData.set_vonemin(minutes);
 
                         //scheduleNotification(getNotification("Visulization 1"),hourOfDay,minutes,4);
-                        NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, localData.get_vonehour(), localData.get_vonemin(),4);
+                        if(PrefManager.getBoolean(getApplicationContext(),PrefManager.VISUAL_NOTIFICATION)) {
+
+                            NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, localData.get_vonehour(), localData.get_vonemin(), 4);
+                        }
 
                         editTextSchVOneTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
                     }
@@ -364,8 +393,11 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
                         localData.set_vtwohour(hourOfDay);
                         localData.set_vtwoemin(minutes);
                        // scheduleNotification(getNotification("Visulization 2"),hourOfDay,minutes,5);
+                        if(PrefManager.getBoolean(getApplicationContext(),PrefManager.VISUAL_NOTIFICATION)) {
 
-                        NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, localData.get_vtwohour(), localData.get_vtwomin(),5);
+
+                            NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, localData.get_vtwohour(), localData.get_vtwomin(), 5);
+                        }
 
                         editTextSchVTwoTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
                     }
@@ -392,8 +424,11 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
                         localData.set_vthreemin(minutes);
 
                         //scheduleNotification(getNotification("Visulization 3"),hourOfDay,minutes,6);
+                        if(PrefManager.getBoolean(getApplicationContext(),PrefManager.VISUAL_NOTIFICATION)) {
 
-                        NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, localData.get_vthreehour(), localData.get_vthreemin(),6);
+
+                            NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, localData.get_vthreehour(), localData.get_vthreemin(), 6);
+                        }
 
                         editTextSchVThreeTime.setText(String.format("%02d:%02d", hourOfDay, minutes) + amPm);
 
@@ -414,7 +449,7 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
     }
 
     private void submitTheTask() {
-        PrefManager prefManager;
+
 
         String taskOneDesc = editTextPTOne.getText().toString().trim();
         String taskTwoDesc = editTextSTTwo.getText().toString().trim();
@@ -431,17 +466,17 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
         String scheduleVTwoTime = editTextSchVTwoTime.getText().toString().trim();
         String scheduleVThreeTime = editTextSchVThreeTime.getText().toString().trim();
 
-        PrefManager.putString(this,PrefManager.TASK1_DES,taskOneDesc);
-        PrefManager.putString(this,PrefManager.TASK2_DES,taskTwoDesc);
-        PrefManager.putString(this,PrefManager.TASK3_DES,taskThreeDesc);
+        localData.putString(this,PrefManager.TASK1_DES,taskOneDesc);
+        localData.putString(this,PrefManager.TASK2_DES,taskTwoDesc);
+        localData.putString(this,PrefManager.TASK3_DES,taskThreeDesc);
 
 
-        PrefManager.putString(this,PrefManager.TASK1Time,scheduleTaskOneTime);
-        PrefManager.putString(this,PrefManager.TASK2Time,scheduleTaskTwoTime);
-        PrefManager.putString(this,PrefManager.TASK3Time,scheduleTaskThreeTime);
-        PrefManager.putString(this,PrefManager.V1Time,scheduleVOneTime);
-        PrefManager.putString(this,PrefManager.V2Time,scheduleVTwoTime);
-        PrefManager.putString(this,PrefManager.V3Time,scheduleVThreeTime);
+        localData.putString(this,PrefManager.TASK1Time,scheduleTaskOneTime);
+        localData.putString(this,PrefManager.TASK2Time,scheduleTaskTwoTime);
+        localData.putString(this,PrefManager.TASK3Time,scheduleTaskThreeTime);
+        localData.putString(this,PrefManager.V1Time,scheduleVOneTime);
+        localData.putString(this,PrefManager.V2Time,scheduleVTwoTime);
+        localData.putString(this,PrefManager.V3Time,scheduleVThreeTime);
 
         Intent i = new Intent(this,HomeActivity.class);
        // i.putExtra("quote",taskOneDesc);
@@ -569,5 +604,60 @@ public class TaskSubmit extends AppCompatActivity implements View.OnClickListene
             //noinspection deprecation
             return getResources().getConfiguration().locale;
         }
+    }
+
+    public String convertTime(String string, int i){
+
+        final List<String> dateFormats = Arrays.asList("h:mm a", "h:mma");
+        StringTokenizer st = new StringTokenizer(string, "\\s+");
+       // SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
+        SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm:ss");
+        Date timeShort, timeLong;
+        String time = null;
+        while(st.hasMoreTokens())
+        {
+            String possibleTime = st.nextToken();
+            if(possibleTime.matches(".*\\d.*"))
+            {
+                System.out.println(possibleTime.trim());
+
+                for(String format: dateFormats){
+                    SimpleDateFormat sdf = new SimpleDateFormat(format);
+                    try{
+                        timeShort = sdf.parse(possibleTime);
+
+                        SimpleDateFormat date24Format = new SimpleDateFormat("HH:mm");
+                        time = date24Format.format(timeShort);
+                        String timeSplit[] = time.split(":");
+                        NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(timeSplit[0]), Integer.parseInt(timeSplit[1].trim()),i);
+                        Log.d("converTime",timeSplit[0]+":"+timeSplit[1]);
+                    } catch (ParseException e) {
+                        //intentionally empty
+                    }
+                }
+//                try {
+//                    timeShort = sdf.parse(possibleTime);
+//
+//                    SimpleDateFormat date24Format = new SimpleDateFormat("HH:mm");
+//                    time = date24Format.format(timeShort);
+//                     String timeSplit[] = time.split(":");
+//                    NotificationScheduler.setReminder(TaskSubmit.this, AlarmReceiver.class, Integer.parseInt(timeSplit[0]), Integer.parseInt(timeSplit[1].trim()),i);
+//                    Log.d("converTime",timeSplit[0]+":"+timeSplit[1]);
+//
+//
+//
+//                } catch (ParseException e) {
+//                    // Not AM/PM Time
+//                }
+//                try {
+//                    timeLong = sdf1.parse(possibleTime);
+//                    System.out.println("TIME: " + timeLong);
+//                } catch (ParseException e) {
+//                    // Not normal Time
+//                }
+            }
+        }
+        return time;
+
     }
 }
